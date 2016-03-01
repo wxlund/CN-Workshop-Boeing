@@ -7,28 +7,30 @@ This one day hands-on classroom style session will provide developers with hands
 
 8:00 AM - 9:00 AM::
  * Registration and Breakfast
-9:00 AM - 9:45 AM::
+9:00 AM - 9:30 AM::
  * Welcome and Agenda
  * Intro: _Pivotal Cloud Foundry at T-Mobile_
-9:45 AM - 10:45 AM::
- * Session 2: _Cloud Native Design, Polyglot Persistence, & Microservices_
-10:45 AM - 11:00 AM:: Break
-11:00 AM - 12:00 PM::
+9:30 AM - 10:30 AM::
+ * Session 2: _Cloud Native Design, Domain Driven Design, & Microservices_
+10:30 AM - 10:45 AM:: Break
+10:45 AM - 12:00 PM::
  * Session 3: _Introducing Spring Boot_
  * Lab 1: Building A Spring Boot Application
+ * Session 4: _Polyglot Persistence with Spring Data REST_
+ * Lab 2: Adding Persistence to Boot Application
 12:00 PM - 12:45 PM:: Lunch
-12:45 PM - 1:45 PM::
- * Session 4: _Advancing Spring Boot with Actuator, Profiles, and Spring Data Rest_
- * Lab 2: Enhancing Microservice with Metrics and REST
-1:45 PM - 2:45 PM::
-  * Session 5: _Introducing Spring Cloud Netflix_
-  * Session 6: _Spring Cloud Config_
-  * Lab 3: Introducing Spring Cloud into Microservice
+12:45 PM - 1:30 PM::
+ * Session 5: _Advancing Spring Boot with Actuator and Profiles_
+ * Lab 3: Enhancing Boot Application with Metrics
+1:30 PM - 2:45 PM::
+  * Session 6: _Introducing Spring Cloud Netflix_
+  * Session 7: _Spring Cloud Config_
+  * Lab 4: Introducing Spring Cloud into Boot Application
 2:45 PM - 3:00 PM:: Break
 3:00 PM - 3:45 PM::
-  * Session 7: _Spring Cloud Netflix - Service Discovery & Load Balancing_
-  * Lab 4: Microservice Service Discover and Client Side Load Balancing
+  * Session 8: _Spring Cloud Netflix - Service Discovery & Load Balancing_
+  * Lab 5: Microservice Service Discover and Load Balancing
 3:45 PM - 4:30 PM::
-  * Session 8: _Spring Cloud Netflix - Circuit Breakers_
-  * Lab 5: Microservice Fault Tolerance with Circuit Breakers
+  * Session 9: _Spring Cloud Netflix - Circuit Breakers_
+  * Lab 6: Microservice Fault Tolerance with Circuit Breakers
 4:30 PM:: Wrap-Up and Closing
