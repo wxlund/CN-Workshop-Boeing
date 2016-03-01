@@ -11,7 +11,7 @@ This one day hands-on classroom style session will provide developers with hands
  * Welcome and Agenda
  * Intro: _Pivotal Cloud Foundry at T-Mobile_
 9:45 AM - 10:45 AM::
- * Session 2: _Cloud Native Design & Microservices_
+ * Session 2: _Cloud Native Design, Polyglot Persistence, & Microservices_
 10:45 AM - 11:00 AM:: Break
 11:00 AM - 12:00 PM::
  * Session 3: _Introducing Spring Boot_
