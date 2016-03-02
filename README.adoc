@@ -9,28 +9,28 @@ This one day hands-on classroom style session will provide developers with hands
  * Registration and Breakfast
 9:00 AM - 9:30 AM::
  * Welcome and Agenda
- * Intro: _Pivotal Cloud Foundry at T-Mobile_
+ * Intro: link:presentations/Intro_CF_at_TM.pptx[_Pivotal Cloud Foundry at T-Mobile_] (TODO: Ben B)
 9:30 AM - 10:30 AM::
- * Session 2: _Cloud Native Design, Domain Driven Design, & Microservices_
+ * Session 1: _Cloud Native Design, Domain Driven Design, & Microservices_ (TODO: Paul H)
 10:30 AM - 10:45 AM:: Break
 10:45 AM - 12:00 PM::
- * Session 3: _Introducing Spring Boot_
- * Lab 1: Building A Spring Boot Application
- * Session 4: _Polyglot Persistence with Spring Data REST_
- * Lab 2: Adding Persistence to Boot Application
+ * Session 2: _Introducing Spring Boot_ (TODO: Ben B)
+ * Lab 1: Building A Spring Boot Application (TODO: Ben B)
+ * Session 3: _Polyglot Persistence with Spring Data REST_ (TODO: Paul H)
+ * Lab 2: Adding Persistence to Boot Application (TODO: Paul H)
 12:00 PM - 12:45 PM:: Lunch
 12:45 PM - 1:30 PM::
- * Session 5: _Advancing Spring Boot with Actuator and Profiles_
- * Lab 3: Enhancing Boot Application with Metrics
+ * Session 4: _Advancing Spring Boot with Actuator and Profiles_ (TODO: Ben B)
+ * Lab 3: Enhancing Boot Application with Metrics (TODO: Ben B)
 1:30 PM - 2:45 PM::
-  * Session 6: _Introducing Spring Cloud Netflix_
-  * Session 7: _Spring Cloud Config_
-  * Lab 4: Introducing Spring Cloud into Boot Application
+  * Session 5: _Introducing Spring Cloud Netflix_ (TODO: Adam Z)
+  * Session 6: _Spring Cloud Config_ (TODO: Adam Z)
+  * Lab 4: Introducing Spring Cloud into Boot Application (TODO: Adam Z)
 2:45 PM - 3:00 PM:: Break
 3:00 PM - 3:45 PM::
-  * Session 8: _Spring Cloud Netflix - Service Discovery & Load Balancing_
-  * Lab 5: Microservice Service Discover and Load Balancing
+  * Session 7: _Spring Cloud Netflix - Service Discovery & Load Balancing_ (TODO: Adam Z)
+  * Lab 5: Microservice Service Discover and Load Balancing (TODO: Adam Z)
 3:45 PM - 4:30 PM::
-  * Session 9: _Spring Cloud Netflix - Circuit Breakers_
-  * Lab 6: Microservice Fault Tolerance with Circuit Breakers
+  * Session 8: _Spring Cloud Netflix - Circuit Breakers_ (TODO: Adam Z)
+  * Lab 6: Microservice Fault Tolerance with Circuit Breakers (TODO: Adam Z)
 4:30 PM:: Wrap-Up and Closing
