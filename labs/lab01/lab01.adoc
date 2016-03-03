@@ -19,13 +19,13 @@ Artifact:: +hello-spring-boot+
 
 . Import the project’s pom.xml into your editor/IDE of choice.
 
-*STS Import Help:*
+TIP: *STS Import Help:*
 
 Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /hello-spring-boot directory (e.g. ~/repos/hello-spring-boot)
 
 == Add an Endpoint
 
-. Add an @RestController annotation to the class +io.pivotal.HelloSpringBootApplication+ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
+. Add an @RestController annotation to the class _io.pivotal.HelloSpringBootApplication_ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
 +
 [source, java, numbered]
 ---------------------------------------------------------------------
@@ -45,7 +45,7 @@ public class HelloSpringBootApplication {
 }
 ---------------------------------------------------------------------
 
-. Add the following request handler to the class +io.pivotal.HelloSpringBootApplication+ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
+. Add the following request handler to the class _io.pivotal.HelloSpringBootApplication_ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
 
 [source,java]
 ---------------------------------------------------------------------
@@ -81,18 +81,18 @@ public class HelloSpringBootApplication {
 }
 ---------------------------------------------------------------------
 
-== Run the +hello-spring-boot+ Application
+== Run the _hello-spring-boot_ Application
 
-. Open a terminal window and change to +hello-spring-boot+ directory:
+. Open a terminal window and change to _hello-spring-boot_ directory:
 +
-$ cd /hello-spring-boot+
+$ cd /hello-spring-boot
 
 . Run the application
 +
-$ mvn clean spring-boot:run+
+$ mvn clean spring-boot:run
 
 . You should see the application start up an embedded Apache Tomcat server on port 8080 (review terminal output):
-
++
 [source,bash]
 ---------------------------------------------------------------------
 2015-10-02 13:26:59.264  INFO 44749 --- [lication.main()] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
@@ -101,6 +101,6 @@ $ mvn clean spring-boot:run+
 
 . Browse to http://localhost:8080
 
-. Stop the +hello-spring-boot+ application. In the terminal window: +Ctrl + C+
+. Stop the _hello-spring-boot_ application. In the terminal window: *Ctrl + C*
 
 *Congratulations!* You’ve just completed your first Spring Boot application.
