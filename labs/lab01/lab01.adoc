@@ -46,7 +46,7 @@ public class HelloSpringBootApplication {
 ---------------------------------------------------------------------
 
 . Add the following request handler to the class _io.pivotal.HelloSpringBootApplication_ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
-
++
 [source,java]
 ---------------------------------------------------------------------
 @RequestMapping("/")
@@ -54,9 +54,9 @@ public String hello() {
     return "Hello World!";
 }
 ---------------------------------------------------------------------
-
++
 Completed:
-
++
 [source,java]
 ---------------------------------------------------------------------
 package io.pivotal;
