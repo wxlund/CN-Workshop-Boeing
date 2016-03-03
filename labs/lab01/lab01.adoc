@@ -85,11 +85,11 @@ public class HelloSpringBootApplication {
 
 . Open a terminal window and change to +hello-spring-boot+ directory:
 
-`$ cd /hello-spring-boot`
++$ cd /hello-spring-boot+
 
 . Run the application
 
-`$ mvn clean spring-boot:run`
++$ mvn clean spring-boot:run+
 
 . You should see the application start up an embedded Apache Tomcat server on port 8080 (review terminal output):
 
@@ -101,6 +101,6 @@ public class HelloSpringBootApplication {
 
 . Browse to http://localhost:8080
 
-. Stop the +hello-spring-boot+ application. In the terminal window: `Ctrl + C`
+. Stop the +hello-spring-boot+ application. In the terminal window: +Ctrl + C+
 
 *Congratulations!* You’ve just completed your first Spring Boot application.
