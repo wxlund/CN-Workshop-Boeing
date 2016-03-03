@@ -13,9 +13,9 @@ Artifact:: +hello-spring-boot+
 
 . In the dependencies section, add the following:
 +
-Web
+*Web*
 
-. Click the *Generate Project* button. Your browser will download a zip file. Unpack that zip file.
+. Click the _Generate Project_ button. Your browser will download a zip file. Unpack that zip file.
 
 . Import the project’s pom.xml into your editor/IDE of choice.
 
@@ -23,7 +23,7 @@ Web
 
 Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /hello-spring-boot directory (e.g. ~/repos/hello-spring-boot)
 
-== Add and Endpoint
+== Add an Endpoint
 
 . Add an @RestController annotation to the class +io.pivotal.HelloSpringBootApplication+ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
 +
@@ -98,3 +98,9 @@ public class HelloSpringBootApplication {
 2015-10-02 13:26:59.264  INFO 44749 --- [lication.main()] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
 2015-10-02 13:26:59.267  INFO 44749 --- [lication.main()] io.pivotal.hello.HelloSpringBootApplication     : Started HelloSpringBootApplication in 2.541 seconds (JVM running for 9.141)
 ---------------------------------------------------------------------
+
+. Browse to http://localhost:8080
+
+. Stop the +hello-spring-boot+ application. In the terminal window: `Ctrl + C`
+
+*Congratulations!* You’ve just completed your first Spring Boot application.
