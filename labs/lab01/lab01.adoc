@@ -8,14 +8,14 @@
 
 . Fill out the *Project metadata* fields as follows:
 +
-Group:: `io.spring.pivotal`
-Artifact:: `hello-spring-boot`
+Group:: +io.pivotal+
+Artifact:: +hello-spring-boot+
 
 . In the dependencies section, add the following:
 +
 Web
 
-. Click the Generate Project button. Your browser will download a zip file. Unpack that zip file.
+. Click the *Generate Project* button. Your browser will download a zip file. Unpack that zip file.
 
 . Import the project’s pom.xml into your editor/IDE of choice.
 
@@ -25,7 +25,7 @@ Select File > Import… Then select Maven > Existing Maven Projects. On the Impo
 
 == Add and Endpoint
 
-. Add an @RestController annotation to the class io.pivotal.HelloSpringBootApplication (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
+. Add an @RestController annotation to the class +io.pivotal.HelloSpringBootApplication+ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
 +
 [source, java, numbered]
 ---------------------------------------------------------------------
@@ -45,3 +45,56 @@ public class HelloSpringBootApplication {
 }
 ---------------------------------------------------------------------
 
+. Add the following request handler to the class +io.pivotal.HelloSpringBootApplication+ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
+
+[source,java]
+---------------------------------------------------------------------
+@RequestMapping("/")
+public String hello() {
+    return "Hello World!";
+}
+---------------------------------------------------------------------
+
+Completed:
+
+[source,java]
+---------------------------------------------------------------------
+package io.pivotal;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@SpringBootApplication
+@RestController
+public class HelloSpringBootApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(HelloSpringBootApplication.class, args);
+    }
+
+    @RequestMapping("/")
+    public String hello() {
+        return "Hello World!";
+    }
+}
+---------------------------------------------------------------------
+
+== Run the +hello-spring-boot+ Application
+
+. Open a terminal window and change to +hello-spring-boot+ directory:
+
+`$ cd /hello-spring-boot`
+
+. Run the application
+
+`$ mvn clean spring-boot:run`
+
+. You should see the application start up an embedded Apache Tomcat server on port 8080 (review terminal output):
+
+[source,bash]
+---------------------------------------------------------------------
+2015-10-02 13:26:59.264  INFO 44749 --- [lication.main()] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+2015-10-02 13:26:59.267  INFO 44749 --- [lication.main()] io.pivotal.hello.HelloSpringBootApplication     : Started HelloSpringBootApplication in 2.541 seconds (JVM running for 9.141)
+---------------------------------------------------------------------
