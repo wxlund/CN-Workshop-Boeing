@@ -19,7 +19,7 @@ Artifact:: +hello-spring-boot+
 
 . Import the project’s pom.xml into your editor/IDE of choice.
 
-_*STS Import Help:*_
+*_STS Import Help:_*
 
 Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /hello-spring-boot directory (e.g. ~/repos/hello-spring-boot)
 
