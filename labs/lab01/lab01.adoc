@@ -27,7 +27,8 @@ Select File > Import… Then select Maven > Existing Maven Projects. On the Impo
 
 . Add an @RestController annotation to the class io.pivotal.HelloSpringBootApplication (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
 +
-[source, java]
+[source, java, numbered]
+---------------------------------------------------------------------
 package io.pivotal;
 
 import org.springframework.boot.SpringApplication;
@@ -42,3 +43,5 @@ public class HelloSpringBootApplication {
         SpringApplication.run(HelloSpringBootApplication.class, args);
     }
 }
+---------------------------------------------------------------------
+
