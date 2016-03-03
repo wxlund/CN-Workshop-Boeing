@@ -15,7 +15,7 @@ This one day hands-on classroom style session will provide developers with hands
 10:30 AM - 10:45 AM:: Break
 10:45 AM - 12:00 PM::
  * Session 2: link:presentations/Session_2_Intro_Boot.pptx[_Introducing Spring Boot_] (TODO: Ben B)
- * Lab 1: Building A Spring Boot Application (TODO: Ben B)
+ * Lab 1: link: labs/lab01/lab01.adoc[Building A Spring Boot Application]
  * Session 3: link:presentations/Session_3_Polyglot_Persist.pptx[_Polyglot Persistence with Spring Data REST_] (TODO: Paul H)
  * Lab 2: Adding Persistence to Boot Application (TODO: Paul H)
 12:00 PM - 12:45 PM:: Lunch
