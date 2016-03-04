@@ -1,0 +1,70 @@
+= Enhancing Boot Application with Metrics
+
+== Set up the Actuator
+
+Spring Boot includes a number of additional features to help you monitor and manage your application when it’s pushed to production. These features are added by adding spring-boot-starter-actuator to the classpath.
+
+. Open a terminal window and change to _hello-spring-boot_ directory:
++
+$ cd /hello-spring-boot
+
+. Add the Spring Boot Actuator dependency to the POM.xml for _hello_spring_boot_ application
++
+[source, xml]
+---------------------------------------------------------------------
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+---------------------------------------------------------------------
+
+. Run the updated _hello-spring-boot_ application:
++
+$ mvn clean spring-boot:run
+
+Try out the following endpoints. The output is omitted here because it can be quite large:
+
+http://localhost:8080/beans
+
+Dumps all of the beans in the Spring context.
+
+http://localhost:8080/autoconfig
+
+Dumps all of the auto-configuration performed as part of application bootstrapping.
+
+http://localhost:8080/configprops
+
+Displays a collated list of all @ConfigurationProperties.
+
+http://localhost:8080/env
+
+Dumps the application’s shell environment as well as all Java system properties.
+
+http://localhost:8080/mappings
+
+Dumps all URI request mappings and the controller methods to which they are mapped.
+
+http://localhost:8080/dump
+
+Performs a thread dump.
+
+http://localhost:8080/trace
+
+Displays trace information (by default the last few HTTP requests).
+
+. Stop the hello-spring-boot-actuator application.
+
+
+
+
+
+== Deploy to Cloud Foundry
+
+. Push application into Cloud Foundry
++
+$ cf push -f manifest.yml
+
+. Find the URL created for your app in the health status report. Browse to your app.
+
+*Congratulations!* You’ve just completed your first Spring Boot application.
+
