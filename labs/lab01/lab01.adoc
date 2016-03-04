@@ -19,8 +19,8 @@ Artifact:: +hello-spring-boot+
 
 . Copy then unpack the downloaded zip file to *CN-Workshop-TM/labs/lab01/hello-spring-boot*
 +
-Your directory structure should now look like
-
+Your directory structure should now look like:
++
 [source, bash]
 ---------------------------------------------------------------------
 CN-Workshop-TM:
@@ -30,9 +30,9 @@ CN-Workshop-TM:
 ---------------------------------------------------------------------
 
 . Import the project’s pom.xml into your editor/IDE of choice.
-
++
 *_STS Import Help:_*
-
++
 Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /hello-spring-boot directory (e.g. CN-Workshop-TM/labs/lab01/hello-spring-boot)
 
 == Add an Endpoint
