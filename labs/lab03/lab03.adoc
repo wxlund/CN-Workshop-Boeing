@@ -241,7 +241,7 @@ Normally, when Spring Security is not enabled, the /health endpoint will only ex
 }
 ---------------------------------------------------------------------
 
-. To simplify working with the endpoint for this lab, we will turn off its sensitivity. Add the following to $SPRING_BOOT_LABS_HOME/hello-spring-boot-actuator/src/main/resources/application.yml:
+. To simplify working with the endpoint for this lab, we will turn off its sensitivity. Add the following to /hello-spring-boot-actuator/src/main/resources/application.yml:
 +
 [source, yaml]
 ---------------------------------------------------------------------
@@ -265,7 +265,7 @@ $ mvn clean package
 $ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
 ---------------------------------------------------------------------
 
-.Browse to http://localhost:8080/health. Out of the box is a _DiskSpaceHealthIndicator_ that monitors health in terms of available disk space. Would your Ops team like to know if the app is close to running out of disk space? DiskSpaceHealthIndicator can be customized via _DiskSpaceHealthIndicatorProperties_. For instance, setting a different threshold for when to report the status as DOWN.
+. Browse to http://localhost:8080/health. Out of the box is a _DiskSpaceHealthIndicator_ that monitors health in terms of available disk space. Would your Ops team like to know if the app is close to running out of disk space? DiskSpaceHealthIndicator can be customized via _DiskSpaceHealthIndicatorProperties_. For instance, setting a different threshold for when to report the status as DOWN.
 +
 [source,json]
 ---------------------------------------------------------------------
@@ -330,7 +330,7 @@ $ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
       "status": "UP",
       "flapper": "ok",
       "random": 42
-  }
+  },
   "diskSpace": {
       "status": "UP",
       "free": 42345678945,
@@ -416,5 +416,5 @@ $ cf push -f manifest.yml
 
 . Find the URL created for your app in the health status report. Browse to your app.
 
-*Congratulations!* You’ve just completed your first Spring Boot application.
+*Congratulations!* You’ve just learned how to add health and metrics to any Spring Boot application.
 
