@@ -117,6 +117,13 @@ $ mvn clean spring-boot:run
 
 == Deploy _hello-spring-boot_ to Pivotal Cloud Foundry
 
+. Build the application
++
+[source,bash]
+---------------------------------------------------------------------
+$ mvn clean package
+---------------------------------------------------------------------
+
 . Create an application manifest in the root folder /hello-spring-boot
 +
 $ touch manifest.yml
@@ -127,11 +134,11 @@ $ touch manifest.yml
 ---------------------------------------------------------------------
 ---
 applications:
-- name: spring-music
-  host: spring-music-${random-word}
+- name: hello-spring-boot
+  host: hello-spring-boot-${random-word}
   memory: 512M
   instances: 1
-  path: build/libs/spring-music.war
+  path: ./target/hello-spring-boot-0.0.1-SNAPSHOT.jar
   buildpack: java_buildpack_offline
 ---------------------------------------------------------------------
 
