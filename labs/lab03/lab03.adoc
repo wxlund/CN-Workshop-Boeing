@@ -389,8 +389,8 @@ Spring Boot provides an endpoint http://localhost:8080/metrics that exposes seve
 "httpsessions.active": 0,
 "gauge.response.metrics": 75,
 "gauge.response.star-star.favicon.ico": 9,
-"counter.status".200.star-star.favicon.ico: 1,
-"counter.status".200.metrics: 1
+"counter.status.200.star-star.favicon.ico": 1,
+"counter.status.200.metrics": 1
 }
 ---------------------------------------------------------------------
 
