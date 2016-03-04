@@ -15,13 +15,25 @@ Artifact:: +hello-spring-boot+
 +
 *Web*
 
-. Click the _Generate Project_ button. Your browser will download a zip file. Unpack that zip file.
+. Click the _Generate Project_ button. Your browser will download a zip file. 
+
+. Copy then unpack the downloaded zip file to *CN-Workshop-TM/labs/lab01/hello-spring-boot*
++
+Your directory structure should now look like
+
+[source, bash]
+---------------------------------------------------------------------
+CN-Workshop-TM:
+├── labs
+│   ├── lab01
+│   │   ├── hello-spring-boot
+---------------------------------------------------------------------
 
 . Import the project’s pom.xml into your editor/IDE of choice.
 
 *_STS Import Help:_*
 
-Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /hello-spring-boot directory (e.g. ~/repos/hello-spring-boot)
+Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /hello-spring-boot directory (e.g. CN-Workshop-TM/labs/lab01/hello-spring-boot)
 
 == Add an Endpoint
 
@@ -83,9 +95,9 @@ public class HelloSpringBootApplication {
 
 == Run the _hello-spring-boot_ Application
 
-. Open a terminal window and change to _hello-spring-boot_ directory:
+. In a terminal, change working directory to *CN-Workshop-TM/labs/lab01/hello-spring-boot*
 +
-$ cd /hello-spring-boot
+$ cd /CN-Workshop-TM/labs/lab01/hello-spring-boot
 
 . Run the application
 +

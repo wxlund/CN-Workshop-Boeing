@@ -2,13 +2,23 @@
 
 == Set up the Actuator
 
-Spring Boot includes a number of additional features to help you monitor and manage your application when it’s pushed to production. These features are added by adding spring-boot-starter-actuator to the classpath.
+Spring Boot includes a number of additional features to help you monitor and manage your application when it’s pushed to production. These features are added by adding _spring-boot-starter-actuator_ to the classpath.
 
-. Open a terminal window and change to _hello-spring-boot_ directory:
+. Open a terminal window and change to lab03 directory
 +
-$ cd /hello-spring-boot
+$ cd CN-Workshop-TM/labs/lab03
 
-. Add the Spring Boot Actuator dependency to the POM.xml for _hello_spring_boot_ application
+. Copy your progress from lab01 to lab03
++
+$ cp -rf ../lab01/hello-spring-boot .
+
+. Rename project to _hello-spring-boot-actuator_
++
+$ mv hello-spring-boot hello-spring-boot-actuator
+
+Be sure your current working directory is CN-Workshop-TM/labs/lab03
+
+. Add the Spring Boot Actuator dependency the following file: /hello-spring-boot-actuator/pom.xml
 +
 [source, xml]
 ---------------------------------------------------------------------
@@ -18,7 +28,7 @@ $ cd /hello-spring-boot
 </dependency>
 ---------------------------------------------------------------------
 
-. Run the updated _hello-spring-boot_ application:
+. Run the updated _hello-spring-boot-actuator_ application:
 +
 $ mvn clean spring-boot:run
 +
@@ -54,6 +64,115 @@ Displays trace information (by default the last few HTTP requests).
 
 . Stop the hello-spring-boot-actuator application.
 
+== Include Version Control Info
+
+Spring Boot provides an endpoint (http://localhost:8080/info) that allows the exposure of arbitrary metadata. By default, it is empty.
+
+One thing that _actuator_ does well is expose information about the specific build and version control coordinates for a given deployment.
+
+. Edit the following file: *CN-Workshop-TM/labs/lab03/hello-spring-boot-actuator/pom.xml*. Add the _git-commit-id-plugin_ to your Maven build. You must edit the file. The _git-commit-id-plugin_ adds Git branch and commit coordinates to the */info* endpoint:
++
+[source, xml]
+---------------------------------------------------------------------
+<plugin>
+	<groupId>pl.project13.maven</groupId>
+	<artifactId>git-commit-id-plugin</artifactId>
+	<configuration>
+			<dotGitDirectory>../../../.git</dotGitDirectory>
+	</configuration>
+</plugin>
+---------------------------------------------------------------------
++
+*NOTE* The path *../../../.git* refers to the .git directory at the root of the lab materials repo.
++
+Completed:
++
+[source, xml]
+---------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>io.pivotal</groupId>
+	<artifactId>hello-spring-boot-actuator</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>hello-spring-boot-actuator</name>
+	<description>Hello Spring Boot</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.3.3.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+                <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-actuator</artifactId>
+                </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<configuration>
+					<dotGitDirectory>../../../.git</dotGitDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+. Run the _hello-spring-boot-actuator_ application:
++
+$ mvn clean spring-boot:run
+
+. Browse to http://localhost:8080/info. Git commit information is now included
++
+[source,json]
+---------------------------------------------------------------------
+{
+ "git":{
+    "branch": "master",
+    "commit": {
+      "id": "123456",
+      "time": "2016-03-03T12:05:10-0500"
+    }
+  }
+}
+---------------------------------------------------------------------
+
+. Stop the _hello-spring-boot-actuator_ application
++
+*What Just Happened?*
++
+By including the _git-commit-id-plugin_, details about git commit information will be included in the */info* endpoint. Git information is captured in a _git.properties_ file that is generated with the build. Review the following file: */hello-spring-boot-actuator/target/classes/git.properties*
+
+== Include Build Info
 
 
 
