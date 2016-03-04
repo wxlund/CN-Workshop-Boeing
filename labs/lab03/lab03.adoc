@@ -146,6 +146,7 @@ Completed:
 		</plugins>
 	</build>
 </project>
+---------------------------------------------------------------------
 
 . Run the _hello-spring-boot-actuator_ application:
 +
