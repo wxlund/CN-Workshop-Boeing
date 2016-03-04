@@ -23,8 +23,8 @@ This one day hands-on classroom style session will provide developers with hands
  * Session 4: link:presentations/Session_4_Advanced_Boot.pptx[_Advancing Spring Boot with Actuator and Profiles_] (TODO: Ben B)
  * Lab 3: Enhancing Boot Application with Metrics (TODO: Ben B)
 1:30 PM - 2:45 PM::
-  * Session 5: link:presentations/Session_5_Intro_SC.pptx[_Introducing Spring Cloud Netflix_] (TODO: Adam Z)
-  * Session 6: link:presentations/Session_6_SC_Config.pptx[_Spring Cloud Config_] (TODO: Adam Z)
+  * Session 5: link:presentations/Session_5_Intro_SC.pptx[_Introducing Spring Cloud Netflix_]
+  * Session 6: link:presentations/Session_6_SC_Config.pptx[_Spring Cloud Config_]
   * Lab 4: Introducing Spring Cloud into Boot Application (TODO: Adam Z)
 2:45 PM - 3:00 PM:: Break
 3:00 PM - 3:45 PM::
