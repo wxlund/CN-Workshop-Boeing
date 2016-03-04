@@ -175,7 +175,21 @@ By including the _git-commit-id-plugin_, details about git commit information wi
 
 == Include Build Info
 
-
+. Add the following properties to hello-spring-boot-actuator/src/main/resources/application.yml. You must edit the file.
++
+[source, yaml]
+---------------------------------------------------------------------
+info: # add this section
+  build:
+    artifact: @project.artifactId@
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+---------------------------------------------------------------------
++
+These will add the project’s Maven coordinates to the /info endpoint. The Spring Boot Maven plugin will cause them to automatically be replaced in the assembled JAR.
++
+*NOTE:* if STS reports a problem with the application.yml due to @ character the problem can safely be ignored.
 
 
 == Deploy to Cloud Foundry
