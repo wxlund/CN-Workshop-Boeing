@@ -15,8 +15,20 @@ $ cp -rf ../lab01/hello-spring-boot .
 . Rename project to _hello-spring-boot-actuator_
 +
 $ mv hello-spring-boot hello-spring-boot-actuator
-
++
 Be sure your current working directory is CN-Workshop-TM/labs/lab03
++
+Your directory structure should now look like:
++
+[source,bash]
+---------------------------------------------------------------------
+CN-Workshop-TM:
+├── labs
+│   ├── lab01
+│   │   └── hello-spring-boot
+│   └── lab03
+│       └── hello-spring-boot-actuator
+---------------------------------------------------------------------
 
 . Add the Spring Boot Actuator dependency the following file: /hello-spring-boot-actuator/pom.xml
 +
