@@ -191,8 +191,224 @@ These will add the project’s Maven coordinates to the /info endpoint. The Spri
 +
 *NOTE:* if STS reports a problem with the application.yml due to @ character the problem can safely be ignored.
 
+. Build and run the hello-spring-boot-actuator application:
++
+[source,bash]
+---------------------------------------------------------------------
+$ mvn clean package
+$ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
+---------------------------------------------------------------------
 
-== Deploy to Cloud Foundry
+. Browse to http://localhost:8080/info. Build information is now included. 
++
+[source,json]
+---------------------------------------------------------------------
+{
+"build": {
+    "artifact": "hello-spring-boot-actuator",
+    "name": "hello-spring-boot-actuator",
+    "description": "Hello Spring Boot",
+    "version": "0.0.0-SNAPSHOT"
+ },
+ "git":{
+    "branch": "master",
+    "commit": {
+      "id": "123456",
+      "time": "2016-03-03T12:05:10-0500"
+    }
+  }
+}
+---------------------------------------------------------------------
+
+. Stop the hello-spring-boot-actuator application.
++
+*What Just Happened?*
++
+We have mapped Maven properties from the pom.xml into the /info endpoint.
++
+Read more about exposing data in the /info endpoint link:http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready[here]
+
+== Health Indicators
+
+Spring Boot provides an endpoint http://localhost:8080/health that exposes various health indicators that describe the health of the given application.
+
+Normally, when Spring Security is not enabled, the /health endpoint will only expose an UP or DOWN value. 
+
+[source,json]
+---------------------------------------------------------------------
+{
+  "status": "UP"
+}
+---------------------------------------------------------------------
+
+. To simplify working with the endpoint for this lab, we will turn off its sensitivity. Add the following to $SPRING_BOOT_LABS_HOME/hello-spring-boot-actuator/src/main/resources/application.yml:
++
+[source, yaml]
+---------------------------------------------------------------------
+info:
+  build:
+    artifact: @project.artifactId@
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+
+endpoints: # add this section
+  health:
+    sensitive: false
+---------------------------------------------------------------------
+
+. Build and run the hello-spring-boot-actuator application:
++
+[source,bash]
+---------------------------------------------------------------------
+$ mvn clean package
+$ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
+---------------------------------------------------------------------
+
+.Browse to http://localhost:8080/health. Out of the box is a _DiskSpaceHealthIndicator_ that monitors health in terms of available disk space. Would your Ops team like to know if the app is close to running out of disk space? DiskSpaceHealthIndicator can be customized via _DiskSpaceHealthIndicatorProperties_. For instance, setting a different threshold for when to report the status as DOWN.
++
+[source,json]
+---------------------------------------------------------------------
+{
+  "status": "UP",
+  "diskSpace": {
+      "status": "UP",
+      "free": 42345678945,
+      "threshold": 12345678
+  }
+}
+---------------------------------------------------------------------
+
+. Stop the hello-spring-boot-actuator application.
+
+. Create the class _io.pivotal.hello.FlappingHealthIndicator_ (/hello-spring-boot-actuator/src/main/java/io/pivotal/hello/FlappingHealthIndicator.java) and into it paste the following code:
++
+[source,java]
+---------------------------------------------------------------------
+package io.pivotal;
+
+import java.util.Random;
+
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
+
+@Component
+public class FlappingHealthIndicator implements HealthIndicator {
+
+    private Random random = new Random(System.currentTimeMillis());
+
+    @Override
+    public Health health() {
+        int result = random.nextInt(100);
+        if (result < 50) {
+            return Health.down().withDetail("flapper", "failure").withDetail("random", result).build();
+        } else {
+            return Health.up().withDetail("flapper", "ok").withDetail("random", result).build();
+        }
+    }
+}
+---------------------------------------------------------------------
++
+This demo health indicator will randomize the health check.
+
+. Build and run the _hello-spring-boot-actuator_ application: 
++
+[source,bash]
+---------------------------------------------------------------------
+$ mvn clean package
+$ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
+---------------------------------------------------------------------
+
+. Browse to http://localhost:8080/health and verify that the output is similar to the following (and changes randomly!). 
++
+[source,json]
+---------------------------------------------------------------------
+{
+  "status": "UP",
+  "flapping": {
+      "status": "UP",
+      "flapper": "ok",
+      "random": 42
+  }
+  "diskSpace": {
+      "status": "UP",
+      "free": 42345678945,
+      "threshold": 12345678
+  }
+}
+---------------------------------------------------------------------
+
+== Metrics
+
+Spring Boot provides an endpoint http://localhost:8080/metrics that exposes several automatically collected metrics for your application. It also allows for the creation of custom metrics.
+
+. Browse to http://localhost:8080/metrics. Review the metrics exposed. 
++
+[source,json]
+---------------------------------------------------------------------
+{
+mem: 418830,
+mem.free: 239376,
+processors: 8,
+instance.uptime: 59563,
+uptime: 69462,
+systemload.average: 1.5703125,
+heap.committed: 341504,
+heap.init: 262144,
+heap.used: 102127,
+heap: 3728384,
+nonheap.committed: 79696,
+nonheap.init: 2496,
+nonheap.used: 77326,
+nonheap: 0,
+threads.peak: 14,
+threads.daemon: 11,
+threads.totalStarted: 17,
+threads: 13,
+classes: 9825,
+classes.loaded: 9825,
+classes.unloaded: 0,
+gc.ps_scavenge.count: 9,
+gc.ps_scavenge.time: 80,
+gc.ps_marksweep.count: 2,
+gc.ps_marksweep.time: 157,
+httpsessions.max: -1,
+httpsessions.active: 0,
+gauge.response.metrics: 75,
+gauge.response.star-star.favicon.ico: 9,
+counter.status.200.star-star.favicon.ico: 1,
+counter.status.200.metrics: 1
+}
+---------------------------------------------------------------------
+
+. Stop the hello-spring-boot-actuator application.
+
+== Deploy _hello-spring-boot-actuator_ to Pivotal Cloud Foundry
+. Build the application
++
+[source,bash]
+---------------------------------------------------------------------
+$ mvn clean package
+---------------------------------------------------------------------
+
+. Create an application manifest in the root folder /hello-spring-boot-actuator
++
+$ touch manifest.yml
+
+. Add application metadata
++
+[source, bash]
+---------------------------------------------------------------------
+---
+applications:
+- name: hello-spring-boot-actuator
+  host: hello-spring-boot-actuator-${random-word}
+  memory: 512M
+  instances: 1
+  path: ./target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
+  buildpack: java_buildpack_offline
+---------------------------------------------------------------------
 
 . Push application into Cloud Foundry
 +
