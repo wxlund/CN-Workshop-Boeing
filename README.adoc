@@ -14,13 +14,13 @@ This one day hands-on classroom style session will provide developers with hands
  * Session 1: link:presentations/Session_1_CN_Design_DDD.pptx[_Cloud Native Design, Domain Driven Design, & Microservices_] (TODO: Paul H)
 10:30 AM - 10:45 AM:: Break
 10:45 AM - 12:00 PM::
- * Session 2: link:presentations/Session_2_Intro_Boot.pptx[_Introducing Spring Boot_] (TODO: Ben B)
+ * Session 2: link:presentations/Session_2_Intro_Boot.pptx[_Introducing Spring Boot_]
  * Lab 1: link:labs/lab01/lab01.adoc[Building A Spring Boot Application]
  * Session 3: link:presentations/Session_3_Polyglot_Persist.pptx[_Polyglot Persistence with Spring Data REST_] (TODO: Paul H)
  * Lab 2: Adding Persistence to Boot Application (TODO: Paul H)
 12:00 PM - 12:45 PM:: Lunch
 12:45 PM - 1:30 PM::
- * Session 4: link:presentations/Session_4_Advanced_Boot.pptx[_Advancing Spring Boot with Actuator and Profiles_] (TODO: Ben B)
+ * Session 4: link:presentations/Session_4_Advanced_Boot.pptx[_Advancing Spring Boot with Actuator and Profiles_]
  * Lab 3: link:labs/lab03/lab03.adoc[Enhancing Boot Application with Metrics]
 1:30 PM - 2:45 PM::
   * Session 5: link:presentations/Session_5_Intro_SC.pptx[_Introducing Spring Cloud Netflix_]
