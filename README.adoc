@@ -28,7 +28,7 @@ This one day hands-on classroom style session will provide developers with hands
   * Lab 4: Introducing Spring Cloud into Boot Application (TODO: Adam Z)
 2:45 PM - 3:00 PM:: Break
 3:00 PM - 3:45 PM::
-  * Session 7: link:presentations/Session_7_SC_Discovery_LB.pptx[_Spring Cloud Netflix - Service Discovery & Load Balancing_] (TODO: Adam Z)
+  * Session 7: link:presentations/Session_7_SC_Discovery_LB.pptx[_Spring Cloud Netflix - Service Discovery & Load Balancing_]
   * Lab 5: Microservice Service Discover and Load Balancing (TODO: Adam Z)
 3:45 PM - 4:30 PM::
   * Session 8: link:presentations/Session_8_Circuit_Breaker.pptx[_Spring Cloud Netflix - Circuit Breakers_] (TODO: Adam Z)
