@@ -1,6 +1,5 @@
-- Using Spring Cloud Config
-- Set up the app-config Repo
--- Create a spring-cloud-config project.
+= Using Spring Cloud Config
+== Set up the app-config Repo
 
 To start, we need a repository to hold our configuration.
 
