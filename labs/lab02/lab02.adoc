@@ -18,13 +18,13 @@ Name:: data-spring-boot
 
 . Click the _Generate Project_ button. Your browser will download a zip file. 
 
-. Copy then unpack the downloaded zip file to *CN-Workshop-TM/labs/lab02/data-jpa-spring-boot*
+. Copy then unpack the downloaded zip file to *CN-Workshop-Boeing/labs/lab02/data-jpa-spring-boot*
 +
 Your directory structure should now look like:
 +
 [source, bash]
 ---------------------------------------------------------------------
-CN-Workshop-TM:
+CN-Workshop-Boeing:
 ├── labs
 │   ├── lab02
 │   │   ├── data-jpa-spring-boot
@@ -34,7 +34,7 @@ CN-Workshop-TM:
 +
 *_STS Import Help:_*
 +
-Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /data-jpa-spring-boot directory (e.g. CN-Workshop-TM/labs/lab02/data-jpa-spring-boot)
+Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /data-jpa-spring-boot directory (e.g. CN-Workshop-Boeing/labs/lab02/data-jpa-spring-boot)
 
 This application will create a simple reading list by asking for books you have read and storing them in a simple relational repository. The first stereotype we will need is the domain model itself, which is Book.
 
@@ -272,9 +272,9 @@ public class DataJpaSpringBootApplication {
 
 == Run the _data-jpa-spring-boot_ Application
 
-. In a terminal, change working directory to *CN-Workshop-TM/labs/lab01/data-jpa-spring-boot*
+. In a terminal, change working directory to *CN-Workshop-Boeing/labs/lab01/data-jpa-spring-boot*
 +
-$ cd /CN-Workshop-TM/labs/lab02/data-jpa-spring-boot
+$ cd /CN-Workshop-Boeing/labs/lab02/data-jpa-spring-boot
 
 . Run the application
 +
@@ -331,20 +331,20 @@ Spring Boot includes a number of additional features to help you monitor and man
 
 . Open a terminal window and confirm you are still working in lab02 directory
 +
-$ cd CN-Workshop-TM/labs/lab02
+$ cd CN-Workshop-Boeing/labs/lab02
 
 . Copy your project from data-jpa-spring-boot to data-rest-spring-boot
 +
 $ cp -rf ../lab02/data-jpa-spring-boot data-rest-spring-boot.
 
 +
-Be sure your current working directory is CN-Workshop-TM/labs/lab02
+Be sure your current working directory is CN-Workshop-Boeing/labs/lab02
 +
 Your directory structure should now look like:
 +
 [source,bash]
 ---------------------------------------------------------------------
-CN-Workshop-TM:
+CN-Workshop-Boeing:
 ├── labs
 │   ├── lab02
 │   │   └── data-jpa-spring-boot
@@ -389,20 +389,20 @@ http://localhost:8080/books
 == Create a Spring Boot Project for use with Mongo based again on data-jpa-spring-boot [Optional]
 . Open a terminal window and confirm you are still working in lab02 directory
 +
-$ cd CN-Workshop-TM/labs/lab02
+$ cd CN-Workshop-Boeing/labs/lab02
 
 . Copy your project from data-jpa-spring-boot to data-mongo-spring-boot
 +
 $ cp -rf ../lab02/data-jpa-spring-boot data-mongo-spring-boot.
 
 +
-Be sure your current working directory is CN-Workshop-TM/labs/lab02
+Be sure your current working directory is CN-Workshop-Boeing/labs/lab02
 +
 Your directory structure should now look like:
 +
 [source,bash]
 ---------------------------------------------------------------------
-CN-Workshop-TM:
+CN-Workshop-Boeing:
 ├── labs
 │   ├── lab02
 │   │   └── data-jpa-spring-boot
@@ -502,9 +502,9 @@ public class Book {
 
 == Run the _data-mongo-spring-boot_ Application
 
-. In a terminal, change working directory to *CN-Workshop-TM/labs/lab01/data-mongo-spring-boot*.  This lab requires that mongo be running in local mode on your workstation.  Install mongo following these instructions: http://https://docs.mongodb.org/manual/installation/ and choosing the appropriate platform. 
+. In a terminal, change working directory to *CN-Workshop-Boeing/labs/lab01/data-mongo-spring-boot*.  This lab requires that mongo be running in local mode on your workstation.  Install mongo following these instructions: http://https://docs.mongodb.org/manual/installation/ and choosing the appropriate platform. 
 +
-$ cd /CN-Workshop-TM/labs/lab02/data-mongo-spring-boot
+$ cd /CN-Workshop-Boeing/labs/lab02/data-mongo-spring-boot
 
 . Run the application
 +
