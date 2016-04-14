@@ -17,13 +17,18 @@ Notice that this repository is basically empty. This repository will be the sour
 
 Set up config-server
 
-1) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/config-server/pom.xml By adding spring-cloud-config-server to the classpath, this application is eligible to embed a config-server.
+. Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/config-server/pom.xml By adding spring-cloud-config-server to the classpath, this application is eligible to embed a config-server.
 
+[source, xml]
+---------------------------------------------------------------------
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-config-server</artifactId>
 </dependency>
-2) Review the following file:$SPRING_CLOUD_SERVICES_LABS_HOME/config-server/src/main/java/io/pivotal/ConfigServerApplication.java
+---------------------------------------------------------------------
+. Review the following file:$SPRING_CLOUD_SERVICES_LABS_HOME/config-server/src/main/java/io/pivotal/ConfigServerApplication.java
+[source, java]
+---------------------------------------------------------------------
 
 @SpringBootApplication
 @EnableConfigServer
@@ -34,6 +39,7 @@ public class ConfigServerApplication {
     }
 }
 Note the @EnableConfigServer annotation. That embeds the config-server.
+---------------------------------------------------------------------
 
 3) Set the GitHub repository for the config-server. This will be the source of the configuration data. Edit the $SPRING_CLOUD_SERVICES_LABS_HOME/config-server/src/main/resources/application.yml file.
 
