@@ -1,432 +1,366 @@
-= Enhancing Boot Application with Metrics
+-Exercises
+-- Set up the app-config Repo
 
-== Set up the Actuator
+1) Create an $APP_CONFIG_REPO_HOME/application.yml in your fork of the app-config repo with the following contents:
 
-Spring Boot includes a number of additional features to help you monitor and manage your application when it’s pushed to production. These features are added by adding _spring-boot-starter-actuator_ to the classpath.
+[source, yml]
+security:
+  basic:
+    enabled: false
 
-. Open a terminal window and change to lab03 directory
-+
-$ cd CN-Workshop-Boeing/labs/lab03
+management:
+  security:
+    enabled: false
 
-. Copy your progress from lab02 to lab03
-+
-$ cp -rf ../lab02/hello-spring-boot .
+logging:
+  level:
+    io:
+      pivotal: DEBUG
+Then commit and push back to Github.
 
-. Rename project to _hello-spring-boot-actuator_
-+
-$ mv hello-spring-boot hello-spring-boot-actuator
-+
-Be sure your current working directory is CN-Workshop-Boeing/labs/lab03
-+
-Your directory structure should now look like:
-+
-[source,bash]
----------------------------------------------------------------------
-CN-Workshop-Boeing:
-├── labs
-│   ├── lab02
-│   │   └── data-jpa-spring-boot
-│   └── lab03
-│       └── hello-spring-boot-actuator
----------------------------------------------------------------------
+A note about the application.yml
 
-. Add the Spring Boot Actuator dependency the following file: /hello-spring-boot-actuator/pom.xml
-+
-[source, xml]
----------------------------------------------------------------------
+When the config-server’s backing repository contains an application.yml it is shared with all applications. Therefore, it is a great place to put common configuration for all applications. In this case, we have dropped security on all the endpoints and setup logging.
+
+In the Spring Cloud Config Lab, we used application specific configuration files:
+
+One based on the application name greeting-config.yml
+One based on the application name + profile greeting-config-qa.yml
+Application specific files override configuration settings in the application.yml.
+
+Set up config-server
+
+1) Start the config-server in a terminal window. You may have a terminal window still open from the previous lab.
+
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
+$ mvn clean spring-boot:run
+2) Verify the config-server is up. Open a browser and fetch http://localhost:8888/myapp/default
+
+Config Server
+
+Note that a random application name was used and it picked up configuration from the application.yml.
+
+Set up service-registry
+
+1) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml file. By adding spring-cloud-starter-eureka-server to the classpath this application is eligible to embed an Eureka server.
+
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-actuator</artifactId>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-eureka-server</artifactId>
 </dependency>
----------------------------------------------------------------------
+2) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java. Note the use of the @EnableEurekaServer annotation that makes this application a Eureka server.
 
-. Run the updated _hello-spring-boot-actuator_ application:
-+
+ @SpringBootApplication
+ @EnableEurekaServer
+ public class ServiceRegistryApplication {
+
+     public static void main(String[] args) {
+         SpringApplication.run(ServiceRegistryApplication.class, args);
+     }
+ }
+3). Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/resources/application.yml
+
+ server:
+   port: 8761
+
+ eureka:
+   instance:
+     hostname: localhost
+   client:
+     registerWithEureka: false
+     fetchRegistry: false
+     serviceUrl:
+       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+About Eureka
+
+Eureka is designed for peer awareness (running multiple instances with knowledge of each other) to further increase availability. Because of this, Eureka is not only a server but a client as well. Therefore, Eureka Servers will be clients to each other. Eureka Server A ⇄ Eureka Server B.
+
+For the purposes of this lab, we will simplify that configuration to run in standalone mode.
+
+Standlalone mode still offers a high degree of resilience with:
+
+Heartbeats between the client and server to keep registrations up to date
+Client side caching, so that clients don’t go to Eureka for every lookup
+By running in Pivotal Cloud Foundry which is designed to keep applications up by design
+With the above configuration, we have configured Eureka to run in standalone mode.
+
+Understanding the configuration parameters
+
+eureka.instance.hostname - the hostname for this service. In this case, what host to use to reach our standalone Eureka instance.
+eureka.client.registerWithEureka - should this application (our standalone Eureka instance) register with Eureka
+eureka.client.fetchRegistry - should this application (our stand alone Eureka instance) fetch the registry (for how to discover services)
+eureka.client.serviceUrl.defaultZone - the Eureka instance to use for registering and discovering services. Notice it is pointing to itself (localhost, 8761).
+4) Open a new terminal window. Start the service-registry.
+
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
 $ mvn clean spring-boot:run
-+
-Try out the following endpoints. The output is omitted here because it can be quite large:
-+
-http://localhost:8080/beans
-+
-Dumps all of the beans in the Spring context.
-+
-http://localhost:8080/autoconfig
-+
-Dumps all of the auto-configuration performed as part of application bootstrapping.
-+
-http://localhost:8080/configprops
-+
-Displays a collated list of all @ConfigurationProperties.
-+
-http://localhost:8080/env
-+
-Dumps the application’s shell environment as well as all Java system properties.
-+
-http://localhost:8080/mappings
-+
-Dumps all URI request mappings and the controller methods to which they are mapped.
-+
-http://localhost:8080/dump
-+
-Performs a thread dump.
-+
-http://localhost:8080/trace
-+
-Displays trace information (by default the last few HTTP requests).
+5) Verify the service-registry is up. Browse to http://localhost:8761/ eureka
 
-. Stop the hello-spring-boot-actuator application.
+Set up fortune-service
 
-== Include Version Control Info
+1) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/resources/bootstrap.yml file. The name of this app is fortune-service. It also uses the config-server.
 
-Spring Boot provides an endpoint (http://localhost:8080/info) that allows the exposure of arbitrary metadata. By default, it is empty.
+ server:
+   port: 8787
+ spring:
+   application:
+     name: fortune-service
+spring.application.name is the name the application will use when registering with Eureka.
 
-One thing that _actuator_ does well is expose information about the specific build and version control coordinates for a given deployment.
+2) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/pom.xml file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
 
-. Edit the following file: *CN-Workshop-Boeing/labs/lab03/hello-spring-boot-actuator/pom.xml*. Add the _git-commit-id-plugin_ to your Maven build. You must edit the file. The _git-commit-id-plugin_ adds Git branch and commit coordinates to the */info* endpoint:
-+
-[source, xml]
----------------------------------------------------------------------
-<plugin>
-	<groupId>pl.project13.maven</groupId>
-	<artifactId>git-commit-id-plugin</artifactId>
-	<configuration>
-			<dotGitDirectory>../../../.git</dotGitDirectory>
-	</configuration>
-</plugin>
----------------------------------------------------------------------
-+
-*NOTE* The path *../../../.git* refers to the .git directory at the root of the lab materials repo.
-+
-Completed:
-+
-[source, xml]
----------------------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<dependency>
+	<groupId>io.pivotal.spring.cloud</groupId>
+	<artifactId>spring-cloud-services-starter-service-registry</artifactId>
+</dependency>
+3) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/java/io/pivotal/FortuneServiceApplication.java. Notice the @EnableDiscoveryClient. This enables a discovery client that registers the fortune-service with the service-registry application.
 
-	<groupId>io.pivotal</groupId>
-	<artifactId>hello-spring-boot-actuator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+@SpringBootApplication
+@EnableDiscoveryClient
+public class FortuneServiceApplication {
 
-	<name>hello-spring-boot-actuator</name>
-	<description>Hello Spring Boot</description>
+    public static void main(String[] args) {
+        SpringApplication.run(FortuneServiceApplication.class, args);
+    }
+}
+4) Open a new terminal window. Start the fortune-service
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.3.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-	</properties>
-
-	<dependencies>
-                <dependency>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-actuator</artifactId>
-                </dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
-				<configuration>
-					<dotGitDirectory>../../../.git</dotGitDirectory>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-</project>
----------------------------------------------------------------------
-
-. Run the _hello-spring-boot-actuator_ application:
-+
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
 $ mvn clean spring-boot:run
+5) After the a few moments, check the service-registry dashboard. Confirm the fortune-service is registered. fortune-service
 
-. Browse to http://localhost:8080/info. Git commit information is now included
-+
-[source,json]
----------------------------------------------------------------------
-{
- "git":{
-    "branch": "master",
-    "commit": {
-      "id": "123456",
-      "time": "2016-03-03T12:05:10-0500"
-    }
-  }
+The Eureka Dashboard may report a warning, because we aren’t setup with multiple peers. This can safely be ignored. warning
+
+Set up greeting-service
+
+1) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/resources/bootstrap.yml file. The name of this app is greeting-service. It also uses the config-server.
+
+ spring:
+   application:
+     name: greeting-service
+2) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/pom.xml file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
+
+<dependency>
+	<groupId>io.pivotal.spring.cloud</groupId>
+	<artifactId>spring-cloud-services-starter-service-registry</artifactId>
+</dependency>
+3) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/GreetingServiceApplication.java. Notice the @EnableDiscoveryClient. This enables a discovery client that registers the greeting-service app with the service-registry.
+
+ @SpringBootApplication
+ @EnableDiscoveryClient
+ public class GreetingServiceApplication {
+
+
+     public static void main(String[] args) {
+         SpringApplication.run(GreetingServiceApplication.class, args);
+     }
+
+ }
+4) Review the the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/greeting/GreetingController.java. Notice the DiscoveryClient. DiscoveryClient is used to discover services registered with the service-registry. See fetchFortuneServiceUrl().
+
+@Controller
+public class GreetingController {
+
+	Logger logger = LoggerFactory
+			.getLogger(GreetingController.class);
+
+
+
+
+	@Autowired
+	private DiscoveryClient discoveryClient;
+
+	@RequestMapping("/")
+	String getGreeting(Model model){
+
+		logger.debug("Adding greeting");
+		model.addAttribute("msg", "Greetings!!!");
+
+
+		RestTemplate restTemplate = new RestTemplate();
+        String fortune = restTemplate.getForObject(fetchFortuneServiceUrl(), String.class);
+
+		logger.debug("Adding fortune");
+		model.addAttribute("fortune", fortune);
+
+		//resolves to the greeting.vm velocity template
+		return "greeting";
+	}
+
+	private String fetchFortuneServiceUrl() {
+	    InstanceInfo instance = discoveryClient.getNextServerFromEureka("FORTUNE-SERVICE", false);
+	    logger.debug("instanceID: {}", instance.getId());
+
+	    String fortuneServiceUrl = instance.getHomePageUrl();
+		  logger.debug("fortune service homePageUrl: {}", fortuneServiceUrl);
+
+	    return fortuneServiceUrl;
+	}
+
 }
----------------------------------------------------------------------
+5) Open a new terminal window. Start the greeting-service app
 
-. Stop the _hello-spring-boot-actuator_ application
-+
-*What Just Happened?*
-+
-By including the _git-commit-id-plugin_, details about git commit information will be included in the */info* endpoint. Git information is captured in a _git.properties_ file that is generated with the build. Review the following file: */hello-spring-boot-actuator/target/classes/git.properties*
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service
+$ mvn clean spring-boot:run
+6) After the a few moments, check the service-registry dashboard http://localhost:8761. Confirm the greeting-service app is registered. greeting
 
-== Include Build Info
+7) Browse to http://localhost:8080/ to the greeting-service application. Confirm you are seeing fortunes. Refresh as desired. Also review the terminal output for the greeting-service. See the fortune-service instanceId and homePageUrl being logged.
 
-. Add the following properties to hello-spring-boot-actuator/src/main/resources/application.yml. You must edit the file.
-+
-[source, yaml]
----------------------------------------------------------------------
-info: # add this section
-  build:
-    artifact: @project.artifactId@
-    name: @project.name@
-    description: @project.description@
-    version: @project.version@
----------------------------------------------------------------------
-+
-These will add the project’s Maven coordinates to the /info endpoint. The Spring Boot Maven plugin will cause them to automatically be replaced in the assembled JAR.
-+
-*NOTE:* if STS reports a problem with the application.yml due to @ character the problem can safely be ignored.
+What Just Happened?
 
-. Build and run the hello-spring-boot-actuator application:
-+
-[source,bash]
----------------------------------------------------------------------
+The greeting-service application was able to discover how to reach the fortune-service via the service-registry (Eureka).
+
+8) When done stop the config-server, service-registry, fortune-service and greeting-service applications.
+
+Optionally Update App Config for fortune-service and greeting-service to run on PCF
+
+1) You may specify the registration method to use for the applications using the spring.cloud.services.registrationMethod parameter.
+
+It can take either of two values:
+
+route: The application will be registered using its Cloud Foundry route (this is the default).
+
+direct: The application will be registered using its host IP and port.
+
+The direct registration method is only compatible with Pivotal Cloud Foundry version 1.5 or higher. In Pivotal Cloud Foundry Operations Manager, within the Pivotal Elastic Runtime tile’s Security Config, the “Enable cross-container traffic within each DEA” or “Enable cross-container traffic” option must be enabled.
+
+When using the direct registration method, requests from client applications to registered applications will not go through the Pivotal Cloud Foundry router. You can utilize this with client-side load balancing techniques using Spring Cloud and Netflix Ribbon. To read more on registration techniques go here.
+
+If cross container traffic has been enabled, in your fork of the app-config repo add an additional section to the $APP_CONFIG_REPO_HOME/application.yml file as seen below and push back to GitHub. If using the route option then no change is needed; move to the next step.
+
+security:
+  basic:
+    enabled: false
+
+management:
+  security:
+    enabled: false
+
+logging:
+  level:
+    io:
+      pivotal: DEBUG
+
+spring: # <---NEW SECTION
+  cloud:
+    services:
+      registrationMethod: direct
+Pivotal Cloud Foundry with HTTPS Only
+
+If your Pivotal Cloud Foundry environment has been configured to only accept HTTPS traffic and is using the route registration method then skip this step, however you will need to change all the code examples moving forward in the labs that use http to https before deploying to your Pivotal Cloud Foundry environment. For instance, the GreetingController from above would have the following change:
+
+InstanceInfo instance = discoveryClient.getNextServerFromEureka("FORTUNE-SERVICE", true);
+Deploy the fortune-service to PCF
+
+1) Package fortune-service
+
 $ mvn clean package
-$ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
----------------------------------------------------------------------
+2) Deploy fortune-service.
 
-. Browse to http://localhost:8080/info. Build information is now included. 
-+
-[source,json]
----------------------------------------------------------------------
-{
-"build": {
-    "artifact": "hello-spring-boot-actuator",
-    "name": "hello-spring-boot-actuator",
-    "description": "Hello Spring Boot",
-    "version": "0.0.0-SNAPSHOT"
- },
- "git":{
-    "branch": "master",
-    "commit": {
-      "id": "123456",
-      "time": "2016-03-03T12:05:10-0500"
-    }
-  }
-}
----------------------------------------------------------------------
+$ cf push fortune-service -p target/fortune-service-0.0.1-SNAPSHOT.jar -m 512M --random-route --no-start
+3) Create a Service Registry Service Instance. The service-registry service instance will not be immediately bindable. It needs a few moments to initialize.
 
-. Stop the hello-spring-boot-actuator application.
-+
-*What Just Happened?*
-+
-We have mapped Maven properties from the pom.xml into the /info endpoint.
-+
-Read more about exposing data in the /info endpoint link:http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready[here]
+$ cf create-service p-service-registry standard service-registry
+Click on the Manage link to determine when the service-registry is ready.
 
-== Health Indicators
+manage
 
-Spring Boot provides an endpoint http://localhost:8080/health that exposes various health indicators that describe the health of the given application.
+4) Bind services to the fortune-service.
 
-Normally, when Spring Security is not enabled, the /health endpoint will only expose an UP or DOWN value. 
+$ cf bind-service fortune-service config-server
+$ cf bind-service fortune-service service-registry
+You will need to wait and try again if you see the following message when binding the service-registry:
 
-[source,json]
----------------------------------------------------------------------
-{
-  "status": "UP"
-}
----------------------------------------------------------------------
+Binding service service-registry to app fortune-service in org dave / space dev as droberts@pivotal.io...
+FAILED
+Server error, status code: 502, error code: 10001, message: Service broker error: Service instance is not running and available for binding.
+You can safely ignore the TIP: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
 
-. To simplify working with the endpoint for this lab, we will turn off its sensitivity. Add the following to /hello-spring-boot-actuator/src/main/resources/application.yml:
-+
-[source, yaml]
----------------------------------------------------------------------
-info:
-  build:
-    artifact: @project.artifactId@
-    name: @project.name@
-    description: @project.description@
-    version: @project.version@
+5) If using self-signed certificates, set the CF_TARGET environment variable for the fortune-service application.
 
-endpoints: # add this section
-  health:
-    sensitive: false
----------------------------------------------------------------------
+$ cf set-env fortune-service CF_TARGET <your api endpoint - make sure it starts with "https://">
+You can safely ignore the TIP: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
 
-. Build and run the hello-spring-boot-actuator application:
-+
-[source,bash]
----------------------------------------------------------------------
+6) Start the fortune-service app.
+
+$ cf start fortune-service
+7) Confirm fortune-service registered with the service-registry. This will take a few moments.
+
+Click on the Manage link for the service-registry. You can find it by navigating to the space where your applications are deployed.
+
+manage
+
+fortune-service
+
+Deploy the greeting-service app to PCF
+
+1) Package greeting-service
+
 $ mvn clean package
-$ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
----------------------------------------------------------------------
+2) Deploy greeting-service.
 
-. Browse to http://localhost:8080/health. Out of the box is a _DiskSpaceHealthIndicator_ that monitors health in terms of available disk space. Would your Ops team like to know if the app is close to running out of disk space? DiskSpaceHealthIndicator can be customized via _DiskSpaceHealthIndicatorProperties_. For instance, setting a different threshold for when to report the status as DOWN.
-+
-[source,json]
----------------------------------------------------------------------
-{
-  "status": "UP",
-  "diskSpace": {
-      "status": "UP",
-      "free": 42345678945,
-      "threshold": 12345678
-  }
-}
----------------------------------------------------------------------
+$ cf push greeting-service -p target/greeting-service-0.0.1-SNAPSHOT.jar -m 512M --random-route --no-start
+3) Bind services for the greeting-service.
 
-. Stop the hello-spring-boot-actuator application.
+$ cf bind-service greeting-service config-server
+$ cf bind-service greeting-service service-registry
+You can safely ignore the TIP: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
 
-. Create the class _io.pivotal.hello.FlappingHealthIndicator_ (/hello-spring-boot-actuator/src/main/java/io/pivotal/hello/FlappingHealthIndicator.java) and into it paste the following code:
-+
-[source,java]
----------------------------------------------------------------------
-package io.pivotal;
+4) If using self signed certificates, set the CF_TARGET environment variable for the greeting-service application.
 
-import java.util.Random;
+$ cf set-env greeting-service CF_TARGET <your api endpoint - make sure it starts with "https://">
+You can safely ignore the TIP: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
+5) Start the greeting-service app.
 
-@Component
-public class FlappingHealthIndicator implements HealthIndicator {
+$ cf start greeting-service
+6) Confirm greeting-service registered with the service-registry. This will take a few moments. greeting
 
-    private Random random = new Random(System.currentTimeMillis());
+7) Browse to the greeting-service application. Confirm you are seeing fortunes. Refresh as desired.
 
-    @Override
-    public Health health() {
-        int result = random.nextInt(100);
-        if (result < 50) {
-            return Health.down().withDetail("flapper", "failure").withDetail("random", result).build();
-        } else {
-            return Health.up().withDetail("flapper", "ok").withDetail("random", result).build();
-        }
-    }
-}
----------------------------------------------------------------------
-+
-This demo health indicator will randomize the health check.
+Scale the fortune-service
 
-. Build and run the _hello-spring-boot-actuator_ application: 
-+
-[source,bash]
----------------------------------------------------------------------
-$ mvn clean package
-$ java -jar target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
----------------------------------------------------------------------
+1) Scale the fortune-service app instances to 3.
 
-. Browse to http://localhost:8080/health and verify that the output is similar to the following (and changes randomly!). 
-+
-[source,json]
----------------------------------------------------------------------
-{
-  "status": "UP",
-  "flapping": {
-      "status": "UP",
-      "flapper": "ok",
-      "random": 42
-  },
-  "diskSpace": {
-      "status": "UP",
-      "free": 42345678945,
-      "threshold": 12345678
-  }
-}
----------------------------------------------------------------------
+$ cf scale fortune-service -i 3
+2) Wait for the new instances to register with the service-registry. This will take a few moments.
 
-== Metrics
+3) Tail the logs for the greeting-service application.
 
-Spring Boot provides an endpoint http://localhost:8080/metrics that exposes several automatically collected metrics for your application. It also allows for the creation of custom metrics.
+[mac, linux]
+$ cf logs greeting-service | grep GreetingController
 
-. Browse to http://localhost:8080/metrics. Review the metrics exposed. 
-+
-[source,json]
----------------------------------------------------------------------
-{
-"mem": 418830,
-"mem.free": 239376,
-"processors": 8,
-"instance.uptime": 59563,
-"uptime": 69462,
-"systemload.average": 1.5703125,
-"heap.committed": 341504,
-"heap.init": 262144,
-"heap.used": 102127,
-"heap": 3728384,
-"nonheap.committed": 79696,
-"nonheap.init": 2496,
-"nonheap.used": 77326,
-"nonheap": 0,
-"threads.peak": 14,
-"threads.daemon": 11,
-"threads.totalStarted": 17,
-"threads": 13,
-"classes": 9825,
-"classes.loaded": 9825,
-"classes.unloaded": 0,
-"gc.ps_scavenge.count": 9,
-"gc.ps_scavenge.time": 80,
-"gc.ps_marksweep.count": 2,
-"gc.ps_marksweep.time": 157,
-"httpsessions.max": -1,
-"httpsessions.active": 0,
-"gauge.response.metrics": 75,
-"gauge.response.star-star.favicon.ico": 9,
-"counter.status.200.star-star.favicon.ico": 1,
-"counter.status.200.metrics": 1
-}
----------------------------------------------------------------------
+[windows]
+$ cf logs greeting-service
+$ # then search output for "GreetingController"
+4) Refresh the greeting-service / endpoint.
 
-. Stop the hello-spring-boot-actuator application.
-
-== Deploy _hello-spring-boot-actuator_ to Pivotal Cloud Foundry
-. Build the application
-+
-[source,bash]
----------------------------------------------------------------------
-$ mvn clean package
----------------------------------------------------------------------
-
-. Create an application manifest in the root folder /hello-spring-boot-actuator
-+
-$ touch manifest.yml
-
-. Add application metadata
-+
+5) Observe the log output. Compare the instanceId and homePageUrl being logged across log entries. The discoveryClient round robins the fortune-service instances.
 [source, bash]
----------------------------------------------------------------------
----
-applications:
-- name: hello-spring-boot-actuator
-  host: hello-spring-boot-actuator-${random-word}
-  memory: 512M
-  instances: 1
-  path: ./target/hello-spring-boot-actuator-0.0.1-SNAPSHOT.jar
-  buildpack: java_buildpack_offline
----------------------------------------------------------------------
+2015-10-29T15:49:56.48-0500 [APP/0]      OUT 2015-10-29 20:49:56.481 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : Adding greeting
+2015-10-29T15:49:56.49-0500 [APP/0]      OUT 2015-10-29 20:49:56.497 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : instanceID: 10.68.104.27:9f960352-f80b-4316-7577-61dd1815ac5f
+2015-10-29T15:49:56.49-0500 [APP/0]      OUT 2015-10-29 20:49:56.498 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : fortune service homePageUrl: http://10.68.104.27:60028/
+2015-10-29T15:49:56.50-0500 [APP/0]      OUT 2015-10-29 20:49:56.507 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : Adding fortune
+2015-10-29T15:49:57.72-0500 [APP/0]      OUT 2015-10-29 20:49:57.722 DEBUG 23 --- [nio-8080-exec-6] io.pivotal.greeting.GreetingController   : Adding greeting
+2015-10-29T15:49:57.73-0500 [APP/0]      OUT 2015-10-29 20:49:57.737 DEBUG 23 --- [nio-8080-exec-6] io.pivotal.greeting.GreetingController   : instanceID: 10.68.104.28:72aa9f59-b27f-4d85-4323-2d79a9d7720c
+2015-10-29T15:49:57.73-0500 [APP/0]      OUT 2015-10-29 20:49:57.737 DEBUG 23 --- [nio-8080-exec-6] io.pivotal.greeting.GreetingController   : fortune service homePageUrl: http://10.68.104.28:60026/
+2015-10-29T15:49:57.74-0500 [APP/0]      OUT 2015-10-29 20:49:57.745 DEBUG 23 --- [nio-8080-exec-6] io.pivotal.greeting.GreetingController   : Adding fortune
+2015-10-29T15:49:58.66-0500 [APP/0]      OUT 2015-10-29 20:49:58.660 DEBUG 23 --- [nio-8080-exec-2] io.pivotal.greeting.GreetingController   : Adding greeting
+2015-10-29T15:49:58.67-0500 [APP/0]      OUT 2015-10-29 20:49:58.672 DEBUG 23 --- [nio-8080-exec-2] io.pivotal.greeting.GreetingController   : instanceID: 10.68.104.29:e117fae6-b847-42c7-5286-8662a993351e
+2015-10-29T15:49:58.67-0500 [APP/0]      OUT 2015-10-29 20:49:58.673 DEBUG 23 --- [nio-8080-exec-2] io.pivotal.greeting.GreetingController   : fortune service homePageUrl: http://10.68.104.29:60020/
+2015-10-29T15:49:58.68-0500 [APP/0]      OUT 2015-10-29 20:49:58.682 DEBUG 23 --- [nio-8080-exec-2] io.pivotal.greeting.GreetingController   : Adding fortune
+2015-10-29T15:49:59.60-0500 [APP/0]      OUT 2015-10-29 20:49:59.609 DEBUG 23 --- [io-8080-exec-10] io.pivotal.greeting.GreetingController   : Adding greeting
+2015-10-29T15:49:59.62-0500 [APP/0]      OUT 2015-10-29 20:49:59.626 DEBUG 23 --- [io-8080-exec-10] io.pivotal.greeting.GreetingController   : instanceID: 10.68.104.27:9f960352-f80b-4316-7577-61dd1815ac5f
+2015-10-29T15:49:59.62-0500 [APP/0]      OUT 2015-10-29 20:49:59.626 DEBUG 23 --- [io-8080-exec-10] io.pivotal.greeting.GreetingController   : fortune service homePageUrl: http://10.68.104.27:60028/
+2015-10-29T15:49:59.63-0500 [APP/0]      OUT 2015-10-29 20:49:59.637 DEBUG 23 --- [io-8080-exec-10] io.pivotal.greeting.GreetingController   : Adding fortune
+2015-10-29T15:50:00.54-0500 [APP/0]      OUT 2015-10-29 20:50:00.548 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : Adding greeting
+2015-10-29T15:50:00.56-0500 [APP/0]      OUT 2015-10-29 20:50:00.564 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : instanceID: 10.68.104.28:72aa9f59-b27f-4d85-4323-2d79a9d7720c
+2015-10-29T15:50:00.56-0500 [APP/0]      OUT 2015-10-29 20:50:00.564 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : fortune service homePageUrl: http://10.68.104.28:60026/
+2015-10-29T15:50:00.57-0500 [APP/0]      OUT 2015-10-29 20:50:00.572 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : Adding fortune
+What Just Happened?
 
-. Push application into Cloud Foundry
-+
-$ cf push -f manifest.yml
+The greeting-service and fortune-service both registered with the service-registry (Eureka). The greeting-service was able to locate the fortune-service via the service-registry. The greeting-service round robins requests to all the fortune-service instances.
 
-. Find the URL created for your app in the health status report. Browse to your app.
-
-*Congratulations!* You’ve just learned how to add health and metrics to any Spring Boot application.
+= Enhancing Boot Application with Metrics
+*Congratulations!* You’ve just learned how to use Spring Cloud Service Discovery and Spring Cloud Service Load Balancing
 
