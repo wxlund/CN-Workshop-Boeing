@@ -9,15 +9,15 @@ This one day hands-on classroom style session will provide developers with hands
  * Registration and Breakfast
 9:00 AM - 9:30 AM::
  * Welcome and Agenda
- * Intro: link:presentations/Intro_CF_at_Boeing.pptx[_Pivotal Cloud Foundry at Boeing_] 
+ * Intro: link:presentations/Intro_CF_at_Boeing.pptx[_Pivotal Cloud Foundry at Boeing_]
 9:30 AM - 10:30 AM::
- * Session 1: link:presentations/Session_1_CN_Design_DDD.pptx[_Cloud Native Design, Domain Driven Design, & Microservices_] 
+ * Session 1: link:presentations/Session_1_CN_Design_DDD.pptx[_Cloud Native Design, Domain Driven Design, & Microservices_]
 10:30 AM - 10:45 AM:: Break
 10:45 AM - 12:00 PM::
  * Session 2: link:presentations/Session_2_Intro_Boot.pptx[_Introducing Spring Boot_]
  * Lab 1: link:labs/lab01/lab01.adoc[Building A Spring Boot Application]
  * Session 3: link:presentations/Session_3_Polyglot_Persist.pptx[_Polyglot Persistence with Spring Data REST_]
- * Lab 2: link:labs/lab02/lab02.adoc[Adding Persistence to Boot Application 
+ * Lab 2: link:labs/lab02/lab02.adoc[_Adding Persistence to Boot Application_]
 12:00 PM - 12:45 PM:: Lunch
 12:45 PM - 1:30 PM::
  * Session 4: link:presentations/Session_4_Advanced_Boot.pptx[_Advancing Spring Boot with Actuator and Profiles_]
@@ -25,7 +25,7 @@ This one day hands-on classroom style session will provide developers with hands
 1:30 PM - 2:45 PM::
   * Session 5: link:presentations/Session_5_Intro_SC.pptx[_Introducing Spring Cloud Netflix_]
   * Session 6: link:presentations/Session_6_SC_Config.pptx[_Spring Cloud Config_]
-  * Lab 4: Introducing Spring Cloud into Boot Application 
+  * Lab 4: Introducing Spring Cloud into Boot Application
 2:45 PM - 3:00 PM:: Break
 3:00 PM - 3:45 PM::
   * Session 7: link:presentations/Session_7_SC_Discovery_LB.pptx[_Spring Cloud Netflix - Service Discovery & Load Balancing_]
