@@ -1,6 +1,6 @@
 = Building a Spring Boot Application
 
-== Create a Spring Boot Project
+== Create a Spring Boot Project for use with JPA
 
 . Browse to https://start.spring.io
 
@@ -328,6 +328,73 @@ applications:
 $ cf push -f manifest.yml
 
 . Find the URL created for your app in the health status report. Browse to your app.
+
+== Set up the Actuator
+
+Spring Boot includes a number of additional features to help you monitor and manage your application when it’s pushed to production. These features are added by adding _spring-boot-starter-actuator_ to the classpath.
+
+. Open a terminal window and confirm you are still working in lab02 directory
++
+$ cd CN-Workshop-TM/labs/lab02
+
+. Copy your project from data-jpa-spring-boot to data-rest-spring-boot
++
+$ cp -rf ../lab02/data-jpa-spring-boot data-rest-spring-boot.
+
++
+Be sure your current working directory is CN-Workshop-TM/labs/lab02
++
+Your directory structure should now look like:
++
+[source,bash]
+---------------------------------------------------------------------
+CN-Workshop-TM:
+├── labs
+│   ├── lab02
+│   │   └── data-jpa-spring-boot
+│   └── lab02
+│       └── data-rest-spring-boot
+---------------------------------------------------------------------
+
+. Add the Spring Boot Rest dependency the following file: /data-rest-spring-boot/pom.xml
++
+[source, xml]
+---------------------------------------------------------------------
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-rest</artifactId>
+</dependency>
+---------------------------------------------------------------------
+
+. Add a ReadingListRestRepository with the following file 
+[source, java]
+package io.pivotal;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+public interface ReadingListRestRepository extends CrudRepository<Book, Long> {
+       
+       List<Book> findByReader(@Param("reader") String reader);
+
+}
+
+. Run the updated _data-rest-spring-boot_ application:
++
+$ mvn clean spring-boot:run
++
+Try out the following endpoints. The output is omitted here because it can be quite large:
++
+http://localhost:8080/books
+---------------------------------------------------------------------
+== Create a Spring Boot Project for use with Mongo [Optional]
+
+
+
+
+
 
 *Congratulations!* You’ve just added persistence to a Spring Boot application.
 
