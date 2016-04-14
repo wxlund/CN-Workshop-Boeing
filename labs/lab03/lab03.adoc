@@ -8,9 +8,9 @@ Spring Boot includes a number of additional features to help you monitor and man
 +
 $ cd CN-Workshop-TM/labs/lab03
 
-. Copy your progress from lab01 to lab03
+. Copy your progress from lab02 to lab03
 +
-$ cp -rf ../lab01/hello-spring-boot .
+$ cp -rf ../lab02/hello-spring-boot .
 
 . Rename project to _hello-spring-boot-actuator_
 +
@@ -24,8 +24,8 @@ Your directory structure should now look like:
 ---------------------------------------------------------------------
 CN-Workshop-TM:
 ├── labs
-│   ├── lab01
-│   │   └── hello-spring-boot
+│   ├── lab02
+│   │   └── data-jpa-spring-boot
 │   └── lab03
 │       └── hello-spring-boot-actuator
 ---------------------------------------------------------------------
