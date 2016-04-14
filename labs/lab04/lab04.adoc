@@ -3,9 +3,8 @@
 
 To start, we need a repository to hold our configuration.
 
-image::
-1) Fork the configuration repo to your account. Browse to: https://github.com/pivotal-enablement/app-config. Then fork the repo. fork
-image::https://github.com/wxlund/CN-Workshop-Boeing/tree/boeing-workshop/labs/lab04/images/repo-fork.png
+1) Fork the configuration repo to your account. Browse to: https://github.com/pivotal-enablement/app-config. Then fork the repo.
+![repo](https://github.com/wxlund/CN-Workshop-Boeing/tree/boeing-workshop/labs/lab04/images/repo-fork.png)
 
 2) GitHub displays your new fork. Copy the HTTPS clone URL from your fork.
 
