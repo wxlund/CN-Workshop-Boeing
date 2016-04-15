@@ -1,6 +1,6 @@
 = Building a Spring Boot Application
 
-== Create a Spring Boot Project
+== Create a Spring Boot Project for use with JPA
 
 . Browse to https://start.spring.io
 
@@ -9,65 +9,249 @@
 . Fill out the *Project metadata* fields as follows:
 +
 Group:: +io.pivotal+
-Artifact:: +hello-spring-boot+
+Artifact:: +data-jpa-spring-boot+
+Name:: data-spring-boot
 
 . In the dependencies section, add the following:
 +
-*Web*
+*Web*, *Thymeleaf*, *JPA*,*H2*
 
 . Click the _Generate Project_ button. Your browser will download a zip file. 
 
-. Copy then unpack the downloaded zip file to *CN-Workshop-TM/labs/lab01/hello-spring-boot*
+. Copy then unpack the downloaded zip file to *CN-Workshop-Boeing/labs/lab02/data-jpa-spring-boot*
 +
 Your directory structure should now look like:
 +
 [source, bash]
 ---------------------------------------------------------------------
-CN-Workshop-TM:
+CN-Workshop-Boeing:
 ├── labs
-│   ├── lab01
-│   │   ├── hello-spring-boot
+│   ├── lab02
+│   │   ├── data-jpa-spring-boot
 ---------------------------------------------------------------------
 
 . Import the project’s pom.xml into your editor/IDE of choice.
 +
 *_STS Import Help:_*
 +
-Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /hello-spring-boot directory (e.g. CN-Workshop-TM/labs/lab01/hello-spring-boot)
+Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to the /data-jpa-spring-boot directory (e.g. CN-Workshop-Boeing/labs/lab02/data-jpa-spring-boot)
 
-== Add an Endpoint
+This application will create a simple reading list by asking for books you have read and storing them in a simple relational repository. The first stereotype we will need is the domain model itself, which is Book.
 
-. Add an @RestController annotation to the class _io.pivotal.HelloSpringBootApplication_ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
+== Add the domain object - Book
+. Add a Book object to the io.pivotal package with the required JPA annotations.
 +
 [source, java, numbered]
 ---------------------------------------------------------------------
 package io.pivotal;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RestController;
+package io.pivotal;
 
-@SpringBootApplication
-@RestController
-public class HelloSpringBootApplication {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-    public static void main(String[] args) {
-        SpringApplication.run(HelloSpringBootApplication.class, args);
-    }
+@Entity
+public class Book {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private Long id;
+	private String reader;
+	private String isbn;
+	private String title;
+	private String author;
+	private String description;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getReader() {
+		return reader;
+	}
+
+	public void setReader(String reader) {
+		this.reader = reader;
+	}
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 }
+
+== Add an Repository in a separate Repository class that we'll name ReadingListRepository 
+
+. We extend a JpaRepository with our domain type and key type as parameters in  class _io.pivotal.ReadingListRepository_ (/data-jpa-spring-boot/src/main/java/io/pivotal/ReadingListRepository.java).
++
+[source, java, numbered]
 ---------------------------------------------------------------------
 
-. Add the following request handler to the class _io.pivotal.HelloSpringBootApplication_ (/hello-spring-boot/src/main/java/io/pivotal/HelloSpringBootApplication.java).
+== Add an Endpoint in a separate Controller class that we'll name ReadingListController
+
+. Add an @RestController annotation to the class _io.pivotal.ReadingListController_ (/data-jpa-spring-boot/src/main/java/io/pivotal/ReadingListController.java).
++
+[source, java, numbered]
+---------------------------------------------------------------------
+package io.pivotal;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+@RequestMapping("/readingList")
+public class ReadingListController {
+
+  private static final String reader = "craig";
+
+	private ReadingListRepository readingListRepository;
+
+	@Autowired
+	public ReadingListController(ReadingListRepository readingListRepository) {
+		this.readingListRepository = readingListRepository;
+	}
+
+	@RequestMapping(method=RequestMethod.GET)
+	public String readersBooks(Model model) {
+
+		List<Book> readingList = readingListRepository.findByReader(reader);
+		if (readingList != null) {
+			model.addAttribute("books", readingList);
+		}
+		return "readingList";
+	}
+
+
+}
+
+
+---------------------------------------------------------------------
+
+. Add a second request handler to the class _io.pivotal.DataJpaSpringBootApplication_ (/data-jpa-spring-boot/src/main/java/io/pivotal/ReadingListController.java).
 +
 [source,java]
 ---------------------------------------------------------------------
-@RequestMapping("/")
-public String hello() {
-    return "Hello World!";
+	@RequestMapping(method=RequestMethod.POST)
+	public String addToReadingList(Book book) {
+		book.setReader(reader);
+		readingListRepository.save(book);
+		return "redirect:/readingList";
+	}
+
+---------------------------------------------------------------------
+. Add a web page so that we can see the book titles provided in an html thymeleaf page called _readingList.html_ (/data-jpa-spring-boot/src/main/resources/templates/readingList.html).
++
+[source,html]
+<html>
+  <head>
+    <title>Reading List</title>
+    <link rel="stylesheet" th:href="@{/style.css}"></link>
+  </head>
+
+  <body>
+    <h2>Your Reading List</h2>
+    <div th:unless="${#lists.isEmpty(books)}">
+      <dl th:each="book : ${books}">
+        <dt class="bookHeadline">
+          <span th:text="${book.title}">Title</span> by
+          <span th:text="${book.author}">Author</span>
+          (ISBN: <span th:text="${book.isbn}">ISBN</span>)
+        </dt>
+        <dd class="bookDescription">
+          <span th:if="${book.description}"
+                th:text="${book.description}">Description</span>
+          <span th:if="${book.description eq null}">
+                No description available</span>
+        </dd>
+      </dl>
+    </div>
+    <div th:if="${#lists.isEmpty(books)}">
+      <p>You have no books in your book list</p>
+    </div>
+
+
+    <hr/>
+
+    <h3>Add a book</h3>
+    <form method="POST">
+      <label for="title">Title:</label>
+        <input type="text" name="title" size="50"></input><br/>
+      <label for="author">Author:</label>
+        <input type="text" name="author" size="50"></input><br/>
+      <label for="isbn">ISBN:</label>
+        <input type="text" name="isbn" size="15"></input><br/>
+      <label for="description">Description:</label><br/>
+        <textarea name="description" cols="80" rows="5"></textarea><br/>
+      <input type="submit"></input>
+    </form>
+
+  </body>
+</html>
+---------------------------------------------------------------------
+
+. Add a simple style sheet to make our page look like a UI engineer has labored over it by placing the style sheet in  (/data-jpa-spring-boot/src/main/resources/static/style.css).
++
+[source,css]
+---------------------------------------------------------------------
+vvbody {
+	background-color: #cccccc;
+	font-family: arial,helvetica,sans-serif;
+}
+
+.bookHeadline {
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+.bookDescription {
+	font-size: 10pt;
+}
+
+label {
+	font-weight: bold;
 }
 ---------------------------------------------------------------------
-+
-Completed:
+
+Completed:  Our main only has the role of bootstrapping the application. 
 +
 [source,java]
 ---------------------------------------------------------------------
@@ -75,29 +259,22 @@ package io.pivotal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@RestController
-public class HelloSpringBootApplication {
+public class DataJpaSpringBootApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(HelloSpringBootApplication.class, args);
-    }
-
-    @RequestMapping("/")
-    public String hello() {
-        return "Hello World!";
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(DataJpaSpringBootApplication.class, args);
+	}
 }
+
 ---------------------------------------------------------------------
 
-== Run the _hello-spring-boot_ Application
+== Run the _data-jpa-spring-boot_ Application
 
-. In a terminal, change working directory to *CN-Workshop-TM/labs/lab01/hello-spring-boot*
+. In a terminal, change working directory to *CN-Workshop-Boeing/labs/lab01/data-jpa-spring-boot*
 +
-$ cd /CN-Workshop-TM/labs/lab01/hello-spring-boot
+$ cd /CN-Workshop-Boeing/labs/lab02/data-jpa-spring-boot
 
 . Run the application
 +
@@ -108,14 +285,14 @@ $ mvn clean spring-boot:run
 [source,bash]
 ---------------------------------------------------------------------
 2015-10-02 13:26:59.264  INFO 44749 --- [lication.main()] s.b.c.e.t.TomcatEmbeddedServletContainer: Tomcat started on port(s): 8080 (http)
-2015-10-02 13:26:59.267  INFO 44749 --- [lication.main()] io.pivotal.hello.HelloSpringBootApplication: Started HelloSpringBootApplication in 2.541 seconds (JVM running for 9.141)
+2015-10-02 13:26:59.267  INFO 44749 --- [lication.main()] io.pivotal.DataJpaSpringBootApplication: Started DataJpaSpringBootApplication in 2.541 seconds (JVM running for 9.141)
 ---------------------------------------------------------------------
 
 . Browse to http://localhost:8080
 
-. Stop the _hello-spring-boot_ application. In the terminal window: *Ctrl + C*
+. Stop the _data-jpa-spring-boot_ application. In the terminal window: *Ctrl + C*
 
-== Deploy _hello-spring-boot_ to Pivotal Cloud Foundry
+== Deploy _data-jpa-spring-boot_ to Pivotal Cloud Foundry
 
 . Build the application
 +
@@ -134,11 +311,11 @@ $ touch manifest.yml
 ---------------------------------------------------------------------
 ---
 applications:
-- name: hello-spring-boot
-  host: hello-spring-boot-${random-word}
+- name: data-jpa-spring-boot
+  host: data-jpa-spring-boot-${random-word}
   memory: 512M
   instances: 1
-  path: ./target/hello-spring-boot-0.0.1-SNAPSHOT.jar
+  path: ./target/data-jpa-spring-boot-0.0.1-SNAPSHOT.jar
   buildpack: java_buildpack_offline
 ---------------------------------------------------------------------
 
@@ -148,5 +325,216 @@ $ cf push -f manifest.yml
 
 . Find the URL created for your app in the health status report. Browse to your app.
 
-*Congratulations!* You’ve just completed your first Spring Boot application.
+== Set up the Rest Repository
+
+Spring Boot includes a number of additional features to help you monitor and manage your application when it’s pushed to production. These features are added by adding _spring-boot-starter-data-rest_ to the classpath.
+
+. Open a terminal window and confirm you are still working in lab02 directory
++
+$ cd CN-Workshop-Boeing/labs/lab02
+
+. Copy your project from data-jpa-spring-boot to data-rest-spring-boot
++
+$ cp -rf ../lab02/data-jpa-spring-boot data-rest-spring-boot.
+
++
+Be sure your current working directory is CN-Workshop-Boeing/labs/lab02
++
+Your directory structure should now look like:
++
+[source,bash]
+---------------------------------------------------------------------
+CN-Workshop-Boeing:
+├── labs
+│   ├── lab02
+│   │   └── data-jpa-spring-boot
+│   └── lab02
+│       └── data-rest-spring-boot
+---------------------------------------------------------------------
+
+. Add the Spring Boot Rest dependency the following file: /data-rest-spring-boot/pom.xml
++
+[source, xml]
+---------------------------------------------------------------------
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-rest</artifactId>
+</dependency>
+---------------------------------------------------------------------
+
+. Add a ReadingListRestRepository with the following file 
+[source, java]
+---------------------------------------------------------------------
+package io.pivotal;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+public interface ReadingListRestRepository extends CrudRepository<Book, Long> {
+
+       List<Book> findByReader(@Param("reader") String reader);
+
+}
+
+. Run the updated _data-rest-spring-boot_ application:
++
+$ mvn clean spring-boot:run
++
+Try out the following endpoints. The output is omitted here because it can be quite large:
++
+http://localhost:8080/books
+---------------------------------------------------------------------
+== Create a Spring Boot Project for use with Mongo based again on data-jpa-spring-boot [Optional]
+. Open a terminal window and confirm you are still working in lab02 directory
++
+$ cd CN-Workshop-Boeing/labs/lab02
+
+. Copy your project from data-jpa-spring-boot to data-mongo-spring-boot
++
+$ cp -rf ../lab02/data-jpa-spring-boot data-mongo-spring-boot.
+
++
+Be sure your current working directory is CN-Workshop-Boeing/labs/lab02
++
+Your directory structure should now look like:
++
+[source,bash]
+---------------------------------------------------------------------
+CN-Workshop-Boeing:
+├── labs
+│   ├── lab02
+│   │   └── data-jpa-spring-boot
+│   └── lab02
+│       └── data-rest-spring-boot
+│   └── lab02
+│       └── data-mongo-spring-boot
+---------------------------------------------------------------------
+
+.Replace the JPA dependency with mongo.  Switch _spring-boot-starter-data-jpa_ with _spring-boot-starter-data-mongodb_
+[source, xml]
+---------------------------------------------------------------------
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+---------------------------------------------------------------------
+. Modify the  ReadingListRestRepository class to target mongodb with the following file in _/src/main/
+[source, java]
+---------------------------------------------------------------------
+package io.pivotal;
+
+import java.util.List;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface ReadingListRepository extends MongoRepository<Book, String> {
+       List<Book> findByReader(String reader);
+}
+---------------------------------------------------------------------
+== Modify the domain object - Book
+. We will modify the Add a Book object to the io.pivotal package with the required JPA annotations and remove the @Entity, which is a stereotype understood by JPA but is not appropriate for describing our domain object as a document targeted for mongo. 
++
+[source, java, numbered]
+---------------------------------------------------------------------
+package io.pivotal;
+import org.springframework.data.annotation.Id;
+
+public class Book {
+       @Id
+       private String id;
+       private String reader;
+       private String isbn;
+       private String title;
+       private String author;
+       private String description;
+
+		 public String getId() {
+		 		  return id;
+		 }
+
+      public void setId(String id) {
+      	     this.id = id;
+	     }
+
+		public String getReader() {
+				 return reader;
+		}
+
+		public void setReader(String reader) {
+				 this.reader = reader;
+		}
+
+		public String getIsbn() {
+				 return isbn;
+		}
+
+      public void setIsbn(String isbn) {
+     			 this.isbn = isbn;
+		}
+
+      public String getTitle() {
+   			 return title;
+		}
+
+		public void setTitle(String title) {
+				 this.title = title;
+		}
+
+		public String getAuthor() {
+				 return author;
+		}
+
+ 		public void setAuthor(String author) {
+				 this.author = author;
+		}
+
+		public String getDescription() {
+				 return description;
+		}
+
+		public void setDescription(String description) {
+				 this.description = description;
+		}
+}
+---------------------------------------------------------------------
+
+== Run the _data-mongo-spring-boot_ Application
+
+. In a terminal, change working directory to *CN-Workshop-Boeing/labs/lab01/data-mongo-spring-boot*.  This lab requires that mongo be running in local mode on your workstation.  Install mongo following these instructions: http://https://docs.mongodb.org/manual/installation/ and choosing the appropriate platform. 
++
+$ cd /CN-Workshop-Boeing/labs/lab02/data-mongo-spring-boot
+
+. Run the application
++
+$ mvn clean spring-boot:run
+
+. You should see the application start up an embedded Apache Tomcat server on port 8080 (review terminal output):
++
+[source,bash]
+---------------------------------------------------------------------
+2015-10-02 13:26:59.264  INFO 44749 --- [lication.main()] s.b.c.e.t.TomcatEmbeddedServletContainer: Tomcat started on port(s): 8080 (http)
+2015-10-02 13:26:59.267  INFO 44749 --- [lication.main()] io.pivotal.DataJpaSpringBootApplication: Started DataJpaSpringBootApplication in 2.541 seconds (JVM running for 9.141)
+---------------------------------------------------------------------
+. Enter a form on https://localhost:8080/readingList
+. Use the mongo shell to show the entries
++
+[source,bash]
+---------------------------------------------------------------------
+> show dbs
+test
+> show collections
+book
+>db.book.find()
+{ "_id" : ObjectId("5548cc837a82da0a325ee821"), "_class" : "com.pivotal.fe.pearons.mongo.Book", "reader" : "wayne", "isbn" : "ISBN-1234", "title" : "Pearson MongoDB", "author" : "Wayne lund", "description" : "Writing Spring Boot apps for mongodb" }
+{ "_id" : ObjectId("5643717f986821fbe5a6b0fc"), "_class" : "com.pivotal.fe.pearons.mongo.Book", "reader" : "wayne", "isbn" : "1234 ", "title" : "MongoDB", "author" : "Wayne Lund", "description" : "Getting mongodb working with spring-data-mongodb" }
+{ "_id" : ObjectId("570752ca5b668f9373953a73"), "_class" : "com.pivotal.pa.mongo.Book", "reader" : "wayne", "isbn" : "203948", "title" : "Spring Boot in Action", "author" : "Craig Walls", "description" : "Repository = Mongo" }
+{ "_id" : ObjectId("5707e1c85b662f3d7564a815"), "_class" : "com.pivotal.pa.mongo.Book", "reader" : "wayne", "isbn" : "203948", "title" : "Learning Spring Boot", "author" : "Greg Turnquist", "description" : "This is a great book" }
+{ "_id" : ObjectId("570fe515c450111285533c28"), "_class" : "com.pivotal.pa.mongo.Book", "reader" : "wayne", "isbn" : "ISBN-4934", "title" : "Boeing in the Pivotal Cloud", "author" : "Aaron Wepler", "description" : "This is a great story of innovation." }
+---------------------------------------------------------------------
+.moving this application to the cloud is left as an exercise to the user following the same steps as previous labs with the additional step that you will need to create a mongo service and bind the application to the service.
+
+
+*Congratulations!* You’ve just switched the persistence engine from JPA to mongodb throught he power of  Spring Data.
 

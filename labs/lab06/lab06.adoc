@@ -1,0 +1,290 @@
+= Spring Cloud Netflix: Circuit Breaker and Metric Aggregation
+Wayne Lund <wxlund@pivotal.io>
+v1.0, 2016-04-14
+
+== *Part I:* Spring Cloud Netflix: Circuit Breaker
+
+=== Start the `config-server`, `service-registry`, and `fortune-service`
+
+1) Start the `config-server` in a terminal window. You may have terminal windows still open from previous labs. They may be reused for this lab.
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
+$ mvn clean spring-boot:run
+```
+2) Start the `service-registry`
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
+$ mvn clean spring-boot:run
+```
+
+3) Start the `fortune-service`
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
+$ mvn clean spring-boot:run
+```
+
+Set up `greeting-hystrix`
+
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-hystrix/pom.xml` file. By adding `spring-cloud-services-starter-circuit-breaker` to the classpath this application is eligible to use circuit breakers via Hystrix.
+```xml
+<dependency>
+	<groupId>io.pivotal.spring.cloud</groupId>
+	<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
+</dependency>
+```
+2) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-hystrix/src/main/java/io/pivotal/GreetingHystrixApplication.java`. Note the use of the `@EnableCircuitBreaker` annotation. This allows the application to create circuit breakers.
+
+[source,java]
+----
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableCircuitBreaker
+public class GreetingHystrixApplication {
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(GreetingHystrixApplication.class, args);
+    }
+
+}
+3). Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-hystrix/src/main/java/io/pivotal/fortune/FortuneService.java. Note the use of the @HystrixCommand. This is our circuit breaker. If getFortune() fails, a fallback method defaultFortune will be invoked.
+
+@Service
+public class FortuneService {
+
+	Logger logger = LoggerFactory
+			.getLogger(FortuneService.class);
+
+	@Autowired
+	@LoadBalanced
+	private RestTemplate restTemplate;
+
+	@HystrixCommand(fallbackMethod = "defaultFortune")
+	public String getFortune() {
+    String fortune = restTemplate.getForObject("http://fortune-service", String.class);
+		return fortune;
+	}
+
+	public String defaultFortune(){
+		logger.debug("Default fortune used.");
+		return "This fortune is no good. Try another.";
+	}
+
+
+
+}
+----
+
+4) Open a new terminal window. Start the `greeting-hystrix`
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-hystrix
+$ mvn clean spring-boot:run
+```
+
+5) Refresh the `greeting-hystrix` / endpoint. You should get fortunes from the `fortune-service.`
+
+6) Stop the `fortune-service`. And refresh the `greeting-hystrix` / endpoint again. The default fortune is given.
+
+7) Restart the fortune-service. And refresh the `greeting-hystrix` / endpoint again. After some time, fortunes from the fortune-service are back.
+
+TIP: What Just Happened?
+
+The circuit breaker insulated `greeting-hystrix` from failures when the fortune-service was not available. This results in a better experience for our users and can also prevent cascading failures.
+
+Set up the `greeting-hystrix` metric stream
+
+Being able to monitor the state of our circuit breakers is highly valuable, but first the `greeting-hystrix` application must expose the metrics.
+
+This is accomplished by including the actuator dependency in the `greeting-hystrix` `pom.xml`.
+
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-hystrix/pom.xml` file. By adding spring-boot-starter-actuator to the classpath this application will publish metrics at the /hystrix.stream endpoint.
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+2) Browse to http://localhost:8080/hystrix.stream to review the metric stream.
+
+Set up `hystrix-dashboard`
+
+Consuming the metric stream is difficult to interpret on our own. The metric stream can be visualized with the Hystrix Dashboard.
+
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/hystrix-dashboard/pom.xml` file. By adding `spring-cloud-starter-hystrix-dashboard` to the classpath this application is exposes a Hystrix Dashboard.
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
+</dependency>
+```
+2) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/hystrix-dashboard/src/main/java/io/pivotal/HystrixDashboardApplication.java`. Note the use of the `@EnableHystrixDashboard` annotation. This creates a Hystrix Dashboard.
+[source,java]
+----
+@SpringBootApplication
+@EnableHystrixDashboard
+
+public class HystrixDashboardApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(HystrixDashboardApplication.class, args);
+    }
+}
+----
+
+3) Open a new terminal window. Start the hystrix-dashboard
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/hystrix-dashboard
+$ mvn clean spring-boot:run
+```
+
+4) Open a browser to http://localhost:8686/hystrix
+
+5) Link the `hystrix-dashboard` to the `greeting-hystrix` app. Enter http://localhost:8080/hystrix.stream as the stream to monitor.
+
+6) Experiment! Refresh the `greeting-hystrix `/ endpoint several times. Take down the `fortune-service` app. What does the dashboard do? Review the dashboard doc for an explanation on metrics.
+
+== *Part II* Spring Cloud Netflix: Circuit Breaker Metric Aggregation
+
+=== Start the `config-server`, `service-registry`, `fortune-service`, `greeting-hystrix`, and `hystrix-dashboard` applications
+
+1) Start the `config-server` in a terminal window. You may have terminal windows still open from previous labs. They may be reused for this lab.
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
+$ mvn clean spring-boot:run
+```
+
+2) Start the `service-registry`
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
+$ mvn clean spring-boot:run
+```
+3) Start the `fortune-service`
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
+$ mvn clean spring-boot:run
+```
+4) Start the `greeting-hystrix`
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-hystrix
+$ mvn clean spring-boot:run
+```
+5) Start the `hystrix-dashboard`
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/hystrix-dashboard
+$ mvn clean spring-boot:run
+```
+Allow a few moments for `greeting-hystrix` and `fortune-service` to register with the `service-registry`.
+
+Set up `turbine`
+
+Looking at individual application instances in the Hystrix Dashboard is not very useful in terms of understanding the overall health of the system. Turbine is an application that aggregates all of the relevant /hystrix.stream endpoints into a combined `/turbine.stream` for use in the Hystrix Dashboard.
+
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/turbine/pom.xml` file. By adding `spring-cloud-starter-turbine` to the classpath this application is eligible to aggregate metrics via Turbine.
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-turbine</artifactId>
+</dependency>
+```
+2) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/turbine/src/main/java/io/pivotal/TurbineApplication.java`. Note the use of the `@EnableTurbine` annotation. This creates a turbine application.
+
+[source,java]
+----
+@SpringBootApplication
+@EnableTurbine
+public class TurbineApplication {
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(TurbineApplication.class, args);
+    }
+
+}
+3). Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/turbine/src/main/resources/bootstrap.yml. turbine.appConfig is a list of Eureka serviceIds that Turbine will use to lookup instances. turbine.aggregator.clusterConfig is the Turbine cluster these services belong to (how they will be grouped).
+
+server:
+  port: 8585
+spring:
+  application:
+    name: turbine
+turbine:
+  aggregator:
+    clusterConfig: GREETING-HYSTRIX
+  appConfig: greeting-hystrix
+----
+
+4) Open a new terminal window. Start the turbine app
+```bash
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/turbine
+$ mvn clean spring-boot:run
+```
+
+5) Wait for the turbine application to register with `service-registry`.
+
+6) View the turbine stream in a browser http://localhost:8585/turbine.stream?cluster=GREETING-HYSTRIX `turbine-stream`
+
+7) Configure the `hystrix-dashboard` to consume the turbine stream. Enter http://localhost:8585/turbine.stream?cluster=GREETING-HYSTRIX
+
+8) Experiment! Refresh the `greeting-hystrix` / endpoint several times. Take down the `fortune-service` app. What does the dashboard do?
+
+9) When done, stop the `config-server`, `service-registry`, `fortune-service`, `greeting-hystrix`, `hystrix-dashboard` and turbine applications.
+
+TIP: What Just Happened?
+
+Turbine discovered the `greeting-hystrix` application through the `service-registry` application. Turbine then consumed the `/hystrix.stream` and rolled that up into an aggregate `/turbine.stream`. Therefore, if we had multiple `greeting-hystrix` applications running all the metrics could be consumed from this single endpoint (/turbine.stream)
+
+=== Deploying to PCF
+
+In PCF, the traditional Turbine model of pulling metrics from all the distributed Hystrix enabled applications via HTTP doesn’t work when using the route `registrationMethod`.
+
+When applications register using the route method every application has the same hostname (every app instance has the same URL for a given app). Therefore it is unknown from the Turbine perspective if all metrics are properly being collected. The problem is solved with Turbine AMQP. Metrics are published through a message broker. We’ll use RabbitMQ.
+
+=== Deploy `greeting-hystrix` to PCF
+
+1) Create a Circuit Breaker Dashboard Service Instance
+```bash
+$ cf create-service p-circuit-breaker-dashboard standard circuit-breaker-dashboard
+```
+When creating a Circuit Breaker Service instance there are three items that get provisioned:
+
+*Hystrix Dashboard application instance
+*Turbine AMQP application instance
+*RabbitMQ Service Instance
+
+This process takes some time and won’t be immediately available for binding. Give it a couple of minutes.
+
+Click on the Manage link for the circuit-breaker-dashboard service instance to determine when the circuit-breaker-dashboard service instance is ready. manage
+
+2) Package and push the `greeting-hystrix` application.
+```bash
+$ mvn clean package
+$ cf push greeting-hystrix -p target/greeting-hystrix-0.0.1-SNAPSHOT.jar -m 512M --random-route --no-start
+```
+
+3) Bind services for the `greeting-hystrix`.
+```bash
+$ cf bind-service greeting-hystrix config-server
+$ cf bind-service greeting-hystrix service-registry
+$ cf bind-service greeting-hystrix circuit-breaker-dashboard
+```
+
+TIP: You can safely ignore the message: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
+
+4) If using self signed certificates, set the `CF_TARGET` environment variable for the `greeting-hystrix` application.
+```bash
+$ cf set-env greeting-hystrix CF_TARGET <your api endpoint - make sure it starts with "https://">
+```
+TIP: You can safely ignore the message: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
+
+5) Start the `greeting-hystrix` app.
+```bash
+$ cf start greeting-hystrix
+```
+
+6) Experiment! Refresh the `greeting-hystrix` / endpoint several times. Take down the `fortune-service` app. Scale the `greeting-hystrix` app. What does the dashboard do?
+
+TIP: What Just Happened?
+
+The `greeting-hystrix` application is publishing metrics via AMQP to RabbitMQ (this can be discovered by looking at `VCAP_SERVICES`). Those metrics are then consumed and aggregated by Turbine. The Circuit Breaker Dashboard then consumes the Turbine endpoint. All of this detail has been abstracted away by using the PCF Circuit Breaker Dashboard Service.
+
+*Congratulations!* You’ve just learned how to add the Circuit Breaker to an application.

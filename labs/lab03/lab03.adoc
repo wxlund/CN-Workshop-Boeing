@@ -6,26 +6,26 @@ Spring Boot includes a number of additional features to help you monitor and man
 
 . Open a terminal window and change to lab03 directory
 +
-$ cd CN-Workshop-TM/labs/lab03
+$ cd CN-Workshop-Boeing/labs/lab03
 
-. Copy your progress from lab01 to lab03
+. Copy your progress from lab02 to lab03
 +
-$ cp -rf ../lab01/hello-spring-boot .
+$ cp -rf ../lab02/hello-spring-boot .
 
 . Rename project to _hello-spring-boot-actuator_
 +
 $ mv hello-spring-boot hello-spring-boot-actuator
 +
-Be sure your current working directory is CN-Workshop-TM/labs/lab03
+Be sure your current working directory is CN-Workshop-Boeing/labs/lab03
 +
 Your directory structure should now look like:
 +
 [source,bash]
 ---------------------------------------------------------------------
-CN-Workshop-TM:
+CN-Workshop-Boeing:
 ├── labs
-│   ├── lab01
-│   │   └── hello-spring-boot
+│   ├── lab02
+│   │   └── data-jpa-spring-boot
 │   └── lab03
 │       └── hello-spring-boot-actuator
 ---------------------------------------------------------------------
@@ -82,7 +82,7 @@ Spring Boot provides an endpoint (http://localhost:8080/info) that allows the ex
 
 One thing that _actuator_ does well is expose information about the specific build and version control coordinates for a given deployment.
 
-. Edit the following file: *CN-Workshop-TM/labs/lab03/hello-spring-boot-actuator/pom.xml*. Add the _git-commit-id-plugin_ to your Maven build. You must edit the file. The _git-commit-id-plugin_ adds Git branch and commit coordinates to the */info* endpoint:
+. Edit the following file: *CN-Workshop-Boeing/labs/lab03/hello-spring-boot-actuator/pom.xml*. Add the _git-commit-id-plugin_ to your Maven build. You must edit the file. The _git-commit-id-plugin_ adds Git branch and commit coordinates to the */info* endpoint:
 +
 [source, xml]
 ---------------------------------------------------------------------
