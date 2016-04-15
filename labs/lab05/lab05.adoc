@@ -6,7 +6,7 @@ v1.0, 2016-04-14
 
 === Set up the app-config Repo
 
-1) Create an `$APP_CONFIG_REPO_HOME/application.yml` in your fork of the app-config repo with the following contents:
+1) Create an `$APP_CONFIG_REPO_HOME/application.yml` in your fork of the `app-config`repo with the following contents:
 
 ```yml
 security:
