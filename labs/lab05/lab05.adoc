@@ -1,9 +1,9 @@
--Exercises
--- Set up the app-config Repo
+= Exercises
+== Set up the app-config Repo
 
-1) Create an $APP_CONFIG_REPO_HOME/application.yml in your fork of the app-config repo with the following contents:
+Create an $APP_CONFIG_REPO_HOME/application.yml in your fork of the app-config repo with the following contents:
 
-[source, yml]
+```yml
 security:
   basic:
     enabled: false
@@ -16,6 +16,7 @@ logging:
   level:
     io:
       pivotal: DEBUG
+```
 Then commit and push back to Github.
 
 A note about the application.yml
@@ -28,12 +29,16 @@ One based on the application name greeting-config.yml
 One based on the application name + profile greeting-config-qa.yml
 Application specific files override configuration settings in the application.yml.
 
-Set up config-server
+== Set up config-server
 
 1) Start the config-server in a terminal window. You may have a terminal window still open from the previous lab.
 
+
+```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
 $ mvn clean spring-boot:run
+```
+
 2) Verify the config-server is up. Open a browser and fetch http://localhost:8888/myapp/default
 
 Config Server
@@ -43,13 +48,14 @@ Note that a random application name was used and it picked up configuration from
 Set up service-registry
 
 1) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml file. By adding spring-cloud-starter-eureka-server to the classpath this application is eligible to embed an Eureka server.
-
+```xml
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-eureka-server</artifactId>
 </dependency>
+```
 2) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java. Note the use of the @EnableEurekaServer annotation that makes this application a Eureka server.
-
+```
  @SpringBootApplication
  @EnableEurekaServer
  public class ServiceRegistryApplication {
@@ -58,6 +64,7 @@ Set up service-registry
          SpringApplication.run(ServiceRegistryApplication.class, args);
      }
  }
+```
 3). Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/resources/application.yml
 
  server:
@@ -363,4 +370,3 @@ The greeting-service and fortune-service both registered with the service-regist
 
 = Enhancing Boot Application with Metrics
 *Congratulations!* You’ve just learned how to use Spring Cloud Service Discovery and Spring Cloud Service Load Balancing
-
