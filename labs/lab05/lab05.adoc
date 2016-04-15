@@ -1,7 +1,8 @@
 = Exercises
+
 == Set up the app-config Repo
 
-Create an $APP_CONFIG_REPO_HOME/application.yml in your fork of the app-config repo with the following contents:
+1) Create an $APP_CONFIG_REPO_HOME/application.yml in your fork of the app-config repo with the following contents:
 
 ```yml
 security:
@@ -19,9 +20,7 @@ logging:
 ```
 Then commit and push back to Github.
 
-A note about the application.yml
-
-When the config-server’s backing repository contains an application.yml it is shared with all applications. Therefore, it is a great place to put common configuration for all applications. In this case, we have dropped security on all the endpoints and setup logging.
+TIP: When the config-server’s backing repository contains an application.yml it is shared with all applications. Therefore, it is a great place to put common configuration for all applications. In this case, we have dropped security on all the endpoints and setup logging.
 
 In the Spring Cloud Config Lab, we used application specific configuration files:
 
