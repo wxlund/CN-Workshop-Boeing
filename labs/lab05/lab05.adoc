@@ -1,4 +1,8 @@
-= Exercises
+= Spring Cloud Netflix: Service Discovery
+Wayne Lund <wxlund@pivotal.io>
+v1.0, 2016-04-14
+
+== Exercises
 
 == Set up the app-config Repo
 
@@ -46,15 +50,16 @@ Note that a random application name was used and it picked up configuration from
 
 Set up service-registry
 
-1) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml file. By adding spring-cloud-starter-eureka-server to the classpath this application is eligible to embed an Eureka server.
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml` file. By adding spring-cloud-starter-eureka-server to the classpath this application is eligible to embed an Eureka server.
 ```xml
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-eureka-server</artifactId>
 </dependency>
 ```
-2) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java. Note the use of the @EnableEurekaServer annotation that makes this application a Eureka server.
-```
+2) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java`. Note the use of the @EnableEurekaServer annotation that makes this application a Eureka server.
+[source,java]
+----
  @SpringBootApplication
  @EnableEurekaServer
  public class ServiceRegistryApplication {
@@ -63,9 +68,11 @@ Set up service-registry
          SpringApplication.run(ServiceRegistryApplication.class, args);
      }
  }
-```
+----
+
 3). Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/resources/application.yml
 
+```yml
  server:
    port: 8761
 
@@ -77,7 +84,8 @@ Set up service-registry
      fetchRegistry: false
      serviceUrl:
        defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-About Eureka
+```
+= About Eureka
 
 Eureka is designed for peer awareness (running multiple instances with knowledge of each other) to further increase availability. Because of this, Eureka is not only a server but a client as well. Therefore, Eureka Servers will be clients to each other. Eureka Server A ⇄ Eureka Server B.
 
@@ -91,36 +99,43 @@ By running in Pivotal Cloud Foundry which is designed to keep applications up by
 With the above configuration, we have configured Eureka to run in standalone mode.
 
 Understanding the configuration parameters
-
+```
 eureka.instance.hostname - the hostname for this service. In this case, what host to use to reach our standalone Eureka instance.
 eureka.client.registerWithEureka - should this application (our standalone Eureka instance) register with Eureka
 eureka.client.fetchRegistry - should this application (our stand alone Eureka instance) fetch the registry (for how to discover services)
 eureka.client.serviceUrl.defaultZone - the Eureka instance to use for registering and discovering services. Notice it is pointing to itself (localhost, 8761).
+```
 4) Open a new terminal window. Start the service-registry.
-
+```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
 $ mvn clean spring-boot:run
+```
 5) Verify the service-registry is up. Browse to http://localhost:8761/ eureka
 
-Set up fortune-service
+== Set up fortune-service
 
-1) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/resources/bootstrap.yml file. The name of this app is fortune-service. It also uses the config-server.
-
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/resources/bootstrap.yml` file. The name of this app is fortune-service. It also uses the config-server.
+```yml
  server:
    port: 8787
  spring:
    application:
      name: fortune-service
+```
 spring.application.name is the name the application will use when registering with Eureka.
 
-2) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/pom.xml file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
+2) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/pom.xml` file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
 
+```xml
 <dependency>
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-starter-service-registry</artifactId>
 </dependency>
-3) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/java/io/pivotal/FortuneServiceApplication.java. Notice the @EnableDiscoveryClient. This enables a discovery client that registers the fortune-service with the service-registry application.
+```
+3) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/java/io/pivotal/FortuneServiceApplication.java`. Notice the @EnableDiscoveryClient. This enables a discovery client that registers the fortune-service with the service-registry application.
 
+[source,java]
+----
 @SpringBootApplication
 @EnableDiscoveryClient
 public class FortuneServiceApplication {
@@ -129,13 +144,16 @@ public class FortuneServiceApplication {
         SpringApplication.run(FortuneServiceApplication.class, args);
     }
 }
+----
 4) Open a new terminal window. Start the fortune-service
 
+```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
 $ mvn clean spring-boot:run
+```
 5) After the a few moments, check the service-registry dashboard. Confirm the fortune-service is registered. fortune-service
 
-The Eureka Dashboard may report a warning, because we aren’t setup with multiple peers. This can safely be ignored. warning
+TIP: The Eureka Dashboard may report a warning, because we aren’t setup with multiple peers. This can safely be ignored. warning
 
 Set up greeting-service
 
