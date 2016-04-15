@@ -2,7 +2,7 @@
 Wayne Lund <wxlund@pivotal.io>
 v1.0, 2016-04-14
 
-== *Part I* Spring Cloud Netflix: Service Discovery
+== *Part I:* Spring Cloud Netflix: Service Discovery
 
 === Set up the app-config Repo
 
@@ -418,7 +418,7 @@ TIP: What Just Happened? The `greeting-service` and `fortune-service` both regis
 
 *Congratulations!* You’ve just learned how to use Spring Cloud Service Discovery
 
-== *Part II* Spring Cloud Netflix: Client Side Load Balancing
+== *Part II:* Spring Cloud Netflix: Client Side Load Balancing
 
 === Start the `config-server`, `service-registry`, and `fortune-service`
 
