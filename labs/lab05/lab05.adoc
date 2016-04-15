@@ -47,9 +47,9 @@ $ mvn clean spring-boot:run
 
 TIP: Note that a random application name was used and it picked up configuration from the `application.yml`.
 
-=== Set up service-registry
+=== Set up `service-registry`
 
-1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml` file. By adding spring-cloud-starter-eureka-server to the classpath this application is eligible to embed an Eureka server.
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml` file. By adding `spring-cloud-starter-eureka-server` to the classpath this application is eligible to embed an Eureka server.
 ```xml
 <dependency>
     <groupId>org.springframework.cloud</groupId>
@@ -57,9 +57,9 @@ TIP: Note that a random application name was used and it picked up configuration
 </dependency>
 ```
 2) Review the following file:
-`$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java`.
+`$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java`
 
-TIP: Note the use of the @EnableEurekaServer annotation that makes this application a Eureka server.
+TIP: Note the use of the `@EnableEurekaServer` annotation that makes this application a Eureka server.
 
 [source,java]
 ----
