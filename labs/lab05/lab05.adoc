@@ -46,9 +46,9 @@ $ mvn clean spring-boot:run
 
 Config Server
 
-Note that a random application name was used and it picked up configuration from the application.yml.
+TIP: Note that a random application name was used and it picked up configuration from the application.yml.
 
-Set up service-registry
+== Set up service-registry
 
 1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml` file. By adding spring-cloud-starter-eureka-server to the classpath this application is eligible to embed an Eureka server.
 ```xml
@@ -57,7 +57,11 @@ Set up service-registry
     <artifactId>spring-cloud-starter-eureka-server</artifactId>
 </dependency>
 ```
-2) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java`. Note the use of the @EnableEurekaServer annotation that makes this application a Eureka server.
+2) Review the following file:
+`$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java`.
+
+TIP: Note the use of the @EnableEurekaServer annotation that makes this application a Eureka server.
+
 [source,java]
 ----
  @SpringBootApplication
@@ -155,21 +159,29 @@ $ mvn clean spring-boot:run
 
 TIP: The Eureka Dashboard may report a warning, because we aren’t setup with multiple peers. This can safely be ignored. warning
 
-Set up greeting-service
+== Set up greeting-service
 
-1) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/resources/bootstrap.yml file. The name of this app is greeting-service. It also uses the config-server.
+1) Review the
+`$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/resources/bootstrap.yml` file. The name of this app is greeting-service. It also uses the config-server.
 
- spring:
+``` yml
+spring:
    application:
      name: greeting-service
-2) Review the $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/pom.xml file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
-
+```
+2) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/pom.xml` file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
+```xml
 <dependency>
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-starter-service-registry</artifactId>
 </dependency>
-3) Review the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/GreetingServiceApplication.java. Notice the @EnableDiscoveryClient. This enables a discovery client that registers the greeting-service app with the service-registry.
+```
+3) Review the following file:
+ `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/GreetingServiceApplication.java`
+ Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the greeting-service app with the service-registry.
 
+[source,java]
+----
  @SpringBootApplication
  @EnableDiscoveryClient
  public class GreetingServiceApplication {
@@ -180,8 +192,12 @@ Set up greeting-service
      }
 
  }
-4) Review the the following file: $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/greeting/GreetingController.java. Notice the DiscoveryClient. DiscoveryClient is used to discover services registered with the service-registry. See fetchFortuneServiceUrl().
+----
 
+4) Review the the following file:
+ `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `DiscoveryClient`. DiscoveryClient is used to discover services registered with the service-registry. See `fetchFortuneServiceUrl()`.
+[source,java]
+----
 @Controller
 public class GreetingController {
 
@@ -222,36 +238,36 @@ public class GreetingController {
 	}
 
 }
-5) Open a new terminal window. Start the greeting-service app
+----
 
+5) Open a new terminal window. Start the greeting-service app
+```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service
 $ mvn clean spring-boot:run
+```
 6) After the a few moments, check the service-registry dashboard http://localhost:8761. Confirm the greeting-service app is registered. greeting
 
 7) Browse to http://localhost:8080/ to the greeting-service application. Confirm you are seeing fortunes. Refresh as desired. Also review the terminal output for the greeting-service. See the fortune-service instanceId and homePageUrl being logged.
 
-What Just Happened?
-
-The greeting-service application was able to discover how to reach the fortune-service via the service-registry (Eureka).
+TIP: What Just Happened? The greeting-service application was able to discover how to reach the fortune-service via the service-registry (Eureka).
 
 8) When done stop the config-server, service-registry, fortune-service and greeting-service applications.
 
-Optionally Update App Config for fortune-service and greeting-service to run on PCF
+== Optionally Update App Config for fortune-service and greeting-service to run on PCF
 
 1) You may specify the registration method to use for the applications using the spring.cloud.services.registrationMethod parameter.
 
 It can take either of two values:
 
-route: The application will be registered using its Cloud Foundry route (this is the default).
-
-direct: The application will be registered using its host IP and port.
+`route:` The application will be registered using its Cloud Foundry route (this is the default).
+`direct:` The application will be registered using its host IP and port.
 
 The direct registration method is only compatible with Pivotal Cloud Foundry version 1.5 or higher. In Pivotal Cloud Foundry Operations Manager, within the Pivotal Elastic Runtime tile’s Security Config, the “Enable cross-container traffic within each DEA” or “Enable cross-container traffic” option must be enabled.
 
 When using the direct registration method, requests from client applications to registered applications will not go through the Pivotal Cloud Foundry router. You can utilize this with client-side load balancing techniques using Spring Cloud and Netflix Ribbon. To read more on registration techniques go here.
 
-If cross container traffic has been enabled, in your fork of the app-config repo add an additional section to the $APP_CONFIG_REPO_HOME/application.yml file as seen below and push back to GitHub. If using the route option then no change is needed; move to the next step.
-
+If cross container traffic has been enabled, in your fork of the app-config repo add an additional section to the `$APP_CONFIG_REPO_HOME/application.yml` file as seen below and push back to GitHub. If using the route option then no change is needed; move to the next step.
+```yml
 security:
   basic:
     enabled: false
@@ -269,45 +285,54 @@ spring: # <---NEW SECTION
   cloud:
     services:
       registrationMethod: direct
-Pivotal Cloud Foundry with HTTPS Only
+```
 
-If your Pivotal Cloud Foundry environment has been configured to only accept HTTPS traffic and is using the route registration method then skip this step, however you will need to change all the code examples moving forward in the labs that use http to https before deploying to your Pivotal Cloud Foundry environment. For instance, the GreetingController from above would have the following change:
+== Pivotal Cloud Foundry with HTTPS Only
 
-InstanceInfo instance = discoveryClient.getNextServerFromEureka("FORTUNE-SERVICE", true);
-Deploy the fortune-service to PCF
+If your Pivotal Cloud Foundry environment has been configured to only accept HTTPS traffic and is using the route registration method then skip this step, however you will need to change all the code examples moving forward in the labs that use http to https before deploying to your Pivotal Cloud Foundry environment. For instance, the `GreetingController` from above would have the following change:
+
+`InstanceInfo instance = discoveryClient.getNextServerFromEureka("FORTUNE-SERVICE", true);`
+
+== Deploy the fortune-service to PCF
 
 1) Package fortune-service
-
+```bash
 $ mvn clean package
+```
 2) Deploy fortune-service.
-
+```bash
 $ cf push fortune-service -p target/fortune-service-0.0.1-SNAPSHOT.jar -m 512M --random-route --no-start
+```
 3) Create a Service Registry Service Instance. The service-registry service instance will not be immediately bindable. It needs a few moments to initialize.
-
+```bash
 $ cf create-service p-service-registry standard service-registry
+```
 Click on the Manage link to determine when the service-registry is ready.
 
-manage
-
 4) Bind services to the fortune-service.
-
+```bash
 $ cf bind-service fortune-service config-server
 $ cf bind-service fortune-service service-registry
+```
 You will need to wait and try again if you see the following message when binding the service-registry:
 
+```bash
 Binding service service-registry to app fortune-service in org dave / space dev as droberts@pivotal.io...
 FAILED
 Server error, status code: 502, error code: 10001, message: Service broker error: Service instance is not running and available for binding.
-You can safely ignore the TIP: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
+```
+TIP: You can safely ignore the message: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
 
 5) If using self-signed certificates, set the CF_TARGET environment variable for the fortune-service application.
-
+```bash
 $ cf set-env fortune-service CF_TARGET <your api endpoint - make sure it starts with "https://">
-You can safely ignore the TIP: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
+```
+TIP: You can safely ignore the message: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
 
 6) Start the fortune-service app.
-
+```bash
 $ cf start fortune-service
+```
 7) Confirm fortune-service registered with the service-registry. This will take a few moments.
 
 Click on the Manage link for the service-registry. You can find it by navigating to the space where your applications are deployed.
@@ -316,14 +341,16 @@ manage
 
 fortune-service
 
-Deploy the greeting-service app to PCF
+== Deploy the greeting-service app to PCF
 
 1) Package greeting-service
-
+```bash
 $ mvn clean package
+```
 2) Deploy greeting-service.
-
+```bash
 $ cf push greeting-service -p target/greeting-service-0.0.1-SNAPSHOT.jar -m 512M --random-route --no-start
+```
 3) Bind services for the greeting-service.
 
 $ cf bind-service greeting-service config-server
