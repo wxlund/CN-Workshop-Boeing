@@ -28,29 +28,28 @@ logging:
 ```
 Then commit and push back to Github.
 
-TIP: When the config-server’s backing repository contains an application.yml it is shared with all applications. Therefore, it is a great place to put common configuration for all applications. In this case, we have dropped security on all the endpoints and setup logging.
+TIP: When the config-server’s backing repository contains an `application.yml` it is shared with all applications. Therefore, it is a great place to put common configuration for all applications. In this case, we have dropped security on all the endpoints and setup logging.
 
 In the Spring Cloud Config Lab, we used application specific configuration files:
 
-One based on the application name `greeting-config.yml`
-One based on the application name + profile `greeting-config-qa.yml`
-Application specific files override configuration settings in the `application.yml`.
+* One based on the application name `greeting-config.yml`
+* One based on the application name + profile `greeting-config-qa.yml`
+* Application specific files override configuration settings in the `application.yml`.
 
-=== Set up config-server
+=== Set up `config-server`
 
-1) Start the config-server in a terminal window. You may have a terminal window still open from the previous lab.
-
+1) Start the `config-server` in a terminal window. You may have a terminal window still open from the previous lab.
 
 ```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
 $ mvn clean spring-boot:run
 ```
 
-2) Verify the config-server is up. Open a browser and fetch http://localhost:8888/myapp/default
+2) Verify the `config-server` is up. Open a browser and fetch http://localhost:8888/myapp/default
 
-Config Server
+`Config Server`
 
-TIP: Note that a random application name was used and it picked up configuration from the application.yml.
+TIP: Note that a random application name was used and it picked up configuration from the `application.yml`.
 
 === Set up service-registry
 
@@ -107,22 +106,22 @@ Standlalone mode still offers a high degree of resilience with:
 * With the above configuration, we have configured Eureka to run in standalone mode.
 
 Understanding the configuration parameters
-```
-eureka.instance.hostname - the hostname for this service. In this case, what host to use to reach our standalone Eureka instance.
-eureka.client.registerWithEureka - should this application (our standalone Eureka instance) register with Eureka
-eureka.client.fetchRegistry - should this application (our stand alone Eureka instance) fetch the registry (for how to discover services)
-eureka.client.serviceUrl.defaultZone - the Eureka instance to use for registering and discovering services. Notice it is pointing to itself (localhost, 8761).
-```
-4) Open a new terminal window. Start the service-registry.
+
+`eureka.instance.hostname` - the hostname for this service. In this case, what host to use to reach our standalone Eureka instance.
+`eureka.client.registerWithEureka` - should this application (our standalone Eureka instance) register with Eureka
+`eureka.client.fetchRegistry` - should this application (our stand alone Eureka instance) fetch the registry (for how to discover services)
+`eureka.client.serviceUrl.defaultZone` - the Eureka instance to use for registering and discovering services. Notice it is pointing to itself (`localhost, 8761`).
+
+4) Open a new terminal window. Start the `service-registry`.
 ```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
 $ mvn clean spring-boot:run
 ```
-5) Verify the service-registry is up. Browse to http://localhost:8761/eureka
+5) Verify the `service-registry` is up. Browse to http://localhost:8761/eureka
 
 === Set up fortune-service
 
-1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/resources/bootstrap.yml` file. The name of this app is fortune-service. It also uses the config-server.
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/resources/bootstrap.yml` file. The name of this app is `fortune-service`. It also uses the `config-server`.
 ```yml
  server:
    port: 8787
@@ -140,7 +139,7 @@ $ mvn clean spring-boot:run
 	<artifactId>spring-cloud-services-starter-service-registry</artifactId>
 </dependency>
 ```
-3) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/java/io/pivotal/FortuneServiceApplication.java`. Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the fortune-service with the service-registry application.
+3) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/java/io/pivotal/FortuneServiceApplication.java`. Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the fortune-service with the `service-registry` application.
 
 [source,java]
 ----
@@ -159,7 +158,7 @@ public class FortuneServiceApplication {
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
 $ mvn clean spring-boot:run
 ```
-5) After the a few moments, check the service-registry dashboard. Confirm the fortune-service is registered. fortune-service
+5) After the a few moments, check the `service-registry` dashboard. Confirm the `fortune-service` is registered. `fortune-service`
 
 TIP: The Eureka Dashboard may report a warning, because we aren’t setup with multiple peers. This can safely be ignored. warning
 
@@ -182,7 +181,7 @@ spring:
 ```
 3) Review the following file:
  `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/GreetingServiceApplication.java`
- Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the greeting-service app with the service-registry.
+ Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the `greeting-service` app with the `service-registry`.
 
 [source,java]
 ----
@@ -199,7 +198,7 @@ spring:
 ----
 
 4) Review the the following file:
- `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `DiscoveryClient`. `DiscoveryClient` is used to discover services registered with the service-registry. See `fetchFortuneServiceUrl()`.
+ `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `DiscoveryClient`. `DiscoveryClient` is used to discover services registered with the `service-registry`. See `fetchFortuneServiceUrl()`.
 [source,java]
 ----
 @Controller
@@ -249,28 +248,29 @@ public class GreetingController {
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service
 $ mvn clean spring-boot:run
 ```
-6) After the a few moments, check the service-registry dashboard http://localhost:8761. Confirm the greeting-service app is registered. greeting
+6) After the a few moments, check the `service-registry` dashboard http://localhost:8761. Confirm the `greeting-service` app is registered. greeting
 
-7) Browse to http://localhost:8080/ to the greeting-service application. Confirm you are seeing fortunes. Refresh as desired. Also review the terminal output for the greeting-service. See the `fortune-service` `instanceId` and `homePageUrl` being logged.
+7) Browse to http://localhost:8080/ to the `greeting-service` application. Confirm you are seeing fortunes. Refresh as desired. Also review the terminal output for the `greeting-service`. See the `fortune-service` `instanceId` and `homePageUrl` being logged.
 
 TIP: What Just Happened? The greeting-service application was able to discover how to reach the fortune-service via the service-registry (Eureka).
 
-8) When done stop the config-server, service-registry, fortune-service and greeting-service applications.
+8) When done stop the `config-server`, `service-registry`, `fortune-service` and `greeting-service` applications.
 
 === Optionally Update App Config for fortune-service and greeting-service to run on PCF
 
-1) You may specify the registration method to use for the applications using the spring.cloud.services.registrationMethod parameter.
+1) You may specify the registration method to use for the applications using the `spring.cloud.services.registrationMethod` parameter.
 
 It can take either of two values:
 
-`route:` The application will be registered using its Cloud Foundry route (this is the default).
-`direct:` The application will be registered using its host IP and port.
+* `route:` The application will be registered using its Cloud Foundry route (this is the default).
+* `direct:` The application will be registered using its host IP and port.
 
-The direct registration method is only compatible with Pivotal Cloud Foundry version 1.5 or higher. In Pivotal Cloud Foundry Operations Manager, within the Pivotal Elastic Runtime tile’s Security Config, the “Enable cross-container traffic within each DEA” or “Enable cross-container traffic” option must be enabled.
+TIP: The `direct` registration method is only compatible with Pivotal Cloud Foundry version 1.5 or higher. In Pivotal Cloud Foundry Operations Manager, within the Pivotal Elastic Runtime tile’s Security Config, the “Enable cross-container traffic within each DEA” or “Enable cross-container traffic” option must be enabled.
 
-When using the direct registration method, requests from client applications to registered applications will not go through the Pivotal Cloud Foundry router. You can utilize this with client-side load balancing techniques using Spring Cloud and Netflix Ribbon. To read more on registration techniques go here.
+When using the direct registration method, requests from client applications to registered applications will not go through the Pivotal Cloud Foundry router. You can utilize this with client-side load balancing techniques using Spring Cloud and Netflix Ribbon.
 
 If cross container traffic has been enabled, in your fork of the app-config repo add an additional section to the `$APP_CONFIG_REPO_HOME/application.yml` file as seen below and push back to GitHub. If using the route option then no change is needed; move to the next step.
+
 ```yml
 security:
   basic:
@@ -337,9 +337,9 @@ TIP: You can safely ignore the message: Use ‘cf restage’ to ensure your env 
 ```bash
 $ cf start fortune-service
 ```
-7) Confirm fortune-service registered with the service-registry. This will take a few moments.
+7) Confirm `fortune-service` registered with the `service-registry`. This will take a few moments.
 
-Click on the Manage link for the service-registry. You can find it by navigating to the space where your applications are deployed.
+Click on the Manage link for the `service-registry`. You can find it by navigating to the space where your applications are deployed.
 
 manage
 
@@ -368,23 +368,23 @@ $ cf set-env greeting-service CF_TARGET <your api endpoint - make sure it starts
 ```
 TIP: You can safely ignore the message: Use ‘cf restage’ to ensure your env variable changes take effect message from the CLI. We don’t need to restage at this time.
 
-5) Start the greeting-service app.
+5) Start the `greeting-service` app.
 ```bash
 $ cf start greeting-service
 ```
-6) Confirm greeting-service registered with the service-registry. This will take a few moments. greeting
+6) Confirm `greeting-service` registered with the `service-registry`. This will take a few moments. greeting
 
-7) Browse to the greeting-service application. Confirm you are seeing fortunes. Refresh as desired.
+7) Browse to the `greeting-service` application. Confirm you are seeing fortunes. Refresh as desired.
 
 === Scale the fortune-service
 
-1) Scale the fortune-service app instances to 3.
+1) Scale the `fortune-service` app instances to 3.
 ```bash
 $ cf scale fortune-service -i 3
 ```
-2) Wait for the new instances to register with the service-registry. This will take a few moments.
+2) Wait for the new instances to register with the `service-registry`. This will take a few moments.
 
-3) Tail the logs for the greeting-service application.
+3) Tail the logs for the `greeting-service` application.
 ```bash
 [mac, linux]
 $ cf logs greeting-service | grep GreetingController
@@ -393,9 +393,9 @@ $ cf logs greeting-service | grep GreetingController
 $ cf logs greeting-service
 $ # then search output for "GreetingController"
 ```
-4) Refresh the greeting-service / endpoint.
+4) Refresh the `greeting-service` / endpoint.
 
-5) Observe the log output. Compare the instanceId and homePageUrl being logged across log entries. The discoveryClient round robins the fortune-service instances.
+5) Observe the log output. Compare the `instanceId` and `homePageUrl` being logged across log entries. The `discoveryClient` round robins the `fortune-service` instances.
 ```bash
 2015-10-29T15:49:56.48-0500 [APP/0]      OUT 2015-10-29 20:49:56.481 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : Adding greeting
 2015-10-29T15:49:56.49-0500 [APP/0]      OUT 2015-10-29 20:49:56.497 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : instanceID: 10.68.104.27:9f960352-f80b-4316-7577-61dd1815ac5f
@@ -418,7 +418,7 @@ $ # then search output for "GreetingController"
 2015-10-29T15:50:00.56-0500 [APP/0]      OUT 2015-10-29 20:50:00.564 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : fortune service homePageUrl: http://10.68.104.28:60026/
 2015-10-29T15:50:00.57-0500 [APP/0]      OUT 2015-10-29 20:50:00.572 DEBUG 23 --- [nio-8080-exec-1] io.pivotal.greeting.GreetingController   : Adding fortune
 ```
-TIP: What Just Happened? The greeting-service and fortune-service both registered with the service-registry (Eureka). The greeting-service was able to locate the fortune-service via the service-registry. The greeting-service round robins requests to all the fortune-service instances.
+TIP: What Just Happened? The `greeting-service` and `fortune-service` both registered with the `service-registry` (Eureka). The `greeting-service` was able to locate the `fortune-service` via the `service-registry`. The `greeting-service` round robins requests to all the `fortune-service` instances.
 
 *Congratulations!* You’ve just learned how to use Spring Cloud Service Discovery
 
@@ -429,31 +429,34 @@ TIP: What Just Happened? The greeting-service and fortune-service both registere
 
 == Spring Cloud Netflix: Client Side Load Balancing
 
-=== Start the config-server, service-registry, and fortune-service
+=== Start the `config-server`, `service-registry`, and `fortune-service`
 
-1) Start the config-server in a terminal window. You may have terminal windows still open from previous labs. They may be reused for this lab.
+1) Start the `config-server` in a terminal window. You may have terminal windows still open from previous labs. They may be reused for this lab.
 ```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
 $ mvn clean spring-boot:run
 ```
-2) Start the service-registry
+2) Start the `service-registry`
 ```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
 $ mvn clean spring-boot:run
 ```
-3) Start the fortune-service
+3) Start the `fortune-service`
 ```bash
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
 $ mvn clean spring-boot:run
 ```
-=== Set up greeting-ribbon
+=== Set up `greeting-ribbon`
 
 TIP: No additions to the `pom.xml`
 
 In this case, we don’t need to explicitly include Ribbon support in the `pom.xml`. Ribbon support is pulled in through transitive dependencies (dependencies of the dependencies we have already defined).
 
 1) Review the the following file:
-`$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-ribbon/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `loadBalancerClient`. It is a client side load balancer (Ribbon). Review the `fetchFortuneServiceUrl()` method. Ribbon is integrated with Eureka so that it can discover services as well. Notice how the `loadBalancerClient` chooses a service instance by name.
+
+`$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-ribbon/src/main/java/io/pivotal/greeting/GreetingController.java`.
+
+Notice the `loadBalancerClient`. It is a client side load balancer (Ribbon). Review the `fetchFortuneServiceUrl()` method. Ribbon is integrated with Eureka so that it can discover services as well. Notice how the `loadBalancerClient` chooses a service instance by name.
 [source,java]
 ----
 @Controller
