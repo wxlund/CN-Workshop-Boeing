@@ -10,7 +10,7 @@
 +
 Group:: +io.pivotal+
 Artifact:: +data-jpa-spring-boot+
-Name:: data-spring-boot
+Name:: data-jap-spring-boot
 
 . In the dependencies section, add the following:
 +
