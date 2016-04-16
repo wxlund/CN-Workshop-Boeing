@@ -225,8 +225,6 @@ We have added several configuration parameters that will be used throughout this
 
 4) Does the `config-server` see the change in your git repo? Let’s check what the `config-server` is serving. Browse to http://localhost:8888/greeting-config/default
 
-updated-config
-
 The `propertySources` value has changed! The `config-server` has picked up the changes to the git repo. (If you don’t see the change, verify that you have pushed the `greeting-config.yml` to GitHub.)
 
 5) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-config/pom.xml`. For the `greeting-config` application to pick up the configuration changes, it must include the actuator dependency. The actuator adds several additional endpoints to the application for operational visibility and tasks that need to be carried out. In this case, we have added the actuator so that we can use the `/refresh` endpoint, which allows us to refresh the application config on demand.
@@ -334,7 +332,7 @@ Congratulations! You have turned on a feature without restarting using the `conf
 
 Now you will use the `config-server` to obtain a service URI rather than hardcoding it your application code.
 
-Beans annotated with the `@RefreshScope `will be recreated when refreshed so they can pick up new config values.
+Beans annotated with the `@RefreshScope` will be recreated when refreshed so they can pick up new config values.
 
 1) Review `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-config/src/main/java/io/pivotal/quote/QuoteService.java`. QuoteService uses the `@RefreshScope` annotation. Beans with the `@RefreshScope` annotation will be recreated when refreshing configuration. The `@Value `annotation allows for injecting the value of the `quoteServiceURL` configuration parameter.
 
@@ -404,8 +402,6 @@ $ set SPRING_PROFILES_ACTIVE=qa
 $ mvn clean spring-boot:run
 ```
 2) Make sure the profile is set by browsing to the http://localhost:8080/env endpoint (provided by actuator). Under profiles qa should be listed.
-
-profile
 
 3) In your fork of the `app-config` repository, create a new file: `greeting-config-qa.yml`. Fill it in with the following content:
 

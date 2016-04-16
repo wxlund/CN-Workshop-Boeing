@@ -16,7 +16,7 @@ Name:: data-spring-boot
 +
 *Web*, *Thymeleaf*, *JPA*,*H2*
 
-. Click the _Generate Project_ button. Your browser will download a zip file. 
+. Click the _Generate Project_ button. Your browser will download a zip file.
 
 . Copy then unpack the downloaded zip file to *CN-Workshop-Boeing/labs/lab02/data-jpa-spring-boot*
 +
@@ -41,9 +41,8 @@ This application will create a simple reading list by asking for books you have 
 == Add the domain object - Book
 . Add a Book object to the io.pivotal package with the required JPA annotations.
 +
-[source, java, numbered]
+[source, java]
 ---------------------------------------------------------------------
-package io.pivotal;
 
 package io.pivotal;
 
@@ -113,12 +112,24 @@ public class Book {
 	}
 
 }
+---------------------------------------------------------------------
 
-== Add an Repository in a separate Repository class that we'll name ReadingListRepository 
+== Add an Repository in a separate Repository class that we'll name ReadingListRepository
 
 . We extend a JpaRepository with our domain type and key type as parameters in  class _io.pivotal.ReadingListRepository_ (/data-jpa-spring-boot/src/main/java/io/pivotal/ReadingListRepository.java).
-+
-[source, java, numbered]
+
+[source, java]
+---------------------------------------------------------------------
+package io.pivotal;
+
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReadingListRepository extends JpaRepository<Book, Long> {
+
+	List<Book> findByReader(String reader);
+
+}
 ---------------------------------------------------------------------
 
 == Add an Endpoint in a separate Controller class that we'll name ReadingListController
@@ -181,6 +192,7 @@ public class ReadingListController {
 . Add a web page so that we can see the book titles provided in an html thymeleaf page called _readingList.html_ (/data-jpa-spring-boot/src/main/resources/templates/readingList.html).
 +
 [source,html]
+---------------------------------------------------------------------
 <html>
   <head>
     <title>Reading List</title>
@@ -229,9 +241,9 @@ public class ReadingListController {
 ---------------------------------------------------------------------
 
 . Add a simple style sheet to make our page look like a UI engineer has labored over it by placing the style sheet in  (/data-jpa-spring-boot/src/main/resources/static/style.css).
-+
-[source,css]
----------------------------------------------------------------------
+
+
+```css
 vvbody {
 	background-color: #cccccc;
 	font-family: arial,helvetica,sans-serif;
@@ -249,10 +261,12 @@ vvbody {
 label {
 	font-weight: bold;
 }
----------------------------------------------------------------------
+```
 
-Completed:  Our main only has the role of bootstrapping the application. 
+
+Completed:  Our main only has the role of bootstrapping the application.
 +
+
 [source,java]
 ---------------------------------------------------------------------
 package io.pivotal;
@@ -267,7 +281,6 @@ public class DataJpaSpringBootApplication {
 		SpringApplication.run(DataJpaSpringBootApplication.class, args);
 	}
 }
-
 ---------------------------------------------------------------------
 
 == Run the _data-jpa-spring-boot_ Application
@@ -362,7 +375,7 @@ CN-Workshop-Boeing:
 </dependency>
 ---------------------------------------------------------------------
 
-. Add a ReadingListRestRepository with the following file 
+. Add a ReadingListRestRepository with the following file
 [source, java]
 ---------------------------------------------------------------------
 package io.pivotal;
@@ -434,7 +447,7 @@ public interface ReadingListRepository extends MongoRepository<Book, String> {
 }
 ---------------------------------------------------------------------
 == Modify the domain object - Book
-. We will modify the Add a Book object to the io.pivotal package with the required JPA annotations and remove the @Entity, which is a stereotype understood by JPA but is not appropriate for describing our domain object as a document targeted for mongo. 
+. We will modify the Add a Book object to the io.pivotal package with the required JPA annotations and remove the @Entity, which is a stereotype understood by JPA but is not appropriate for describing our domain object as a document targeted for mongo.
 +
 [source, java, numbered]
 ---------------------------------------------------------------------
@@ -502,7 +515,7 @@ public class Book {
 
 == Run the _data-mongo-spring-boot_ Application
 
-. In a terminal, change working directory to *CN-Workshop-Boeing/labs/lab01/data-mongo-spring-boot*.  This lab requires that mongo be running in local mode on your workstation.  Install mongo following these instructions: http://https://docs.mongodb.org/manual/installation/ and choosing the appropriate platform. 
+. In a terminal, change working directory to *CN-Workshop-Boeing/labs/lab01/data-mongo-spring-boot*.  This lab requires that mongo be running in local mode on your workstation.  Install mongo following these instructions: http://https://docs.mongodb.org/manual/installation/ and choosing the appropriate platform.
 +
 $ cd /CN-Workshop-Boeing/labs/lab02/data-mongo-spring-boot
 
@@ -536,5 +549,4 @@ book
 .moving this application to the cloud is left as an exercise to the user following the same steps as previous labs with the additional step that you will need to create a mongo service and bind the application to the service.
 
 
-*Congratulations!* You’ve just switched the persistence engine from JPA to mongodb throught he power of  Spring Data.
-
+*Congratulations!* You’ve just switched the persistence engine from JPA to mongodb through the power of  Spring Data.
