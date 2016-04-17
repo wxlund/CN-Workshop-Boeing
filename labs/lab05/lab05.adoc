@@ -7,7 +7,7 @@ v1.0, 2016-04-14
 
 === Set up the app-config Repo
 
-1) Create an `$APP_CONFIG_REPO_HOME/application.yml` in your fork of the `app-config`repo with the following contents:
+1) Create an `application.yml` in your fork of the `app-config`repo with the following contents:
 
 ```yml
 security:
@@ -38,7 +38,7 @@ In the Spring Cloud Config Lab, we used application specific configuration files
 1) Start the `config-server` in a terminal window. You may have a terminal window still open from the previous lab.
 
 ```bash
-$ cd lab05/config-server
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
 $ mvn clean spring-boot:run
 ```
 
@@ -50,15 +50,17 @@ TIP: Note that a random application name was used and it picked up configuration
 
 === Set up `service-registry`
 
-1) Review the `lab05/service-registry/pom.xml` file. By adding `spring-cloud-starter-eureka-server` to the classpath this application is eligible to embed an Eureka server.
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/pom.xml` file. By adding `spring-cloud-starter-eureka-server` to the classpath this application is eligible to embed an Eureka server.
+
 [source, xml]
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-eureka-server</artifactId>
 </dependency>
 ```
+
 2) Review the following file:
-`lab05/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java`
+`$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/java/io/pivotal/ServiceRegistryApplication.java`
 
 TIP: Note the use of the `@EnableEurekaServer` annotation that makes this application a Eureka server.
 
@@ -74,7 +76,7 @@ TIP: Note the use of the `@EnableEurekaServer` annotation that makes this applic
  }
 ----
 
-3). Review the following file: `lab05/service-registry/src/main/resources/application.yml`
+3). Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/service-registry/src/main/resources/application.yml`
 
 ```yml
  server:
@@ -104,21 +106,21 @@ Standlalone mode still offers a high degree of resilience with:
 
 Understanding the configuration parameters
 
-`eureka.instance.hostname` - the hostname for this service. In this case, what host to use to reach our standalone Eureka instance.
-`eureka.client.registerWithEureka` - should this application (our standalone Eureka instance) register with Eureka
-`eureka.client.fetchRegistry` - should this application (our stand alone Eureka instance) fetch the registry (for how to discover services)
-`eureka.client.serviceUrl.defaultZone` - the Eureka instance to use for registering and discovering services. Notice it is pointing to itself (`localhost, 8761`).
+* `eureka.instance.hostname` - the hostname for this service. In this case, what host to use to reach our standalone Eureka instance.
+* `eureka.client.registerWithEureka` - should this application (our standalone Eureka instance) register with Eureka
+* `eureka.client.fetchRegistry` - should this application (our stand alone Eureka instance) fetch the registry (for how to discover services)
+* `eureka.client.serviceUrl.defaultZone` - the Eureka instance to use for registering and discovering services. Notice it is pointing to itself (`localhost, 8761`).
 
 4) Open a new terminal window. Start the `service-registry`.
 ```bash
-$ cd lab05/service-registry
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
 $ mvn clean spring-boot:run
 ```
-5) Verify the `service-registry` is up. Browse to http://localhost:8761/eureka
+5) Verify the `service-registry` is up. Browse to http://localhost:8761
 
 === Set up fortune-service
 
-1) Review the `lab05/fortune-service/src/main/resources/bootstrap.yml` file. The name of this app is `fortune-service`. It also uses the `config-server`.
+1) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/resources/bootstrap.yml` file. The name of this app is `fortune-service`. It also uses the `config-server`.
 ```yml
  server:
    port: 8787
@@ -128,7 +130,7 @@ $ mvn clean spring-boot:run
 ```
 `spring.application.name` is the name the application will use when registering with Eureka.
 
-2) Review the `lab05/fortune-service/pom.xml` file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
+2) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/pom.xml` file. By adding spring-cloud-services-starter-service-registry to the classpath this application is eligible to register and discover services with the service-registry.
 
 ```xml
 <dependency>
@@ -136,7 +138,7 @@ $ mvn clean spring-boot:run
 	<artifactId>spring-cloud-services-starter-service-registry</artifactId>
 </dependency>
 ```
-3) Review the following file: `lab05/fortune-service/src/main/java/io/pivotal/FortuneServiceApplication.java`. Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the fortune-service with the `service-registry` application.
+3) Review the following file: `$SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service/src/main/java/io/pivotal/FortuneServiceApplication.java`. Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the fortune-service with the `service-registry` application.
 
 [source,java]
 ----
@@ -152,7 +154,7 @@ public class FortuneServiceApplication {
 4) Open a new terminal window. Start the fortune-service
 
 ```bash
-$ cd lab05/fortune-service
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
 $ mvn clean spring-boot:run
 ```
 5) After the a few moments, check the `service-registry` dashboard. Confirm the `fortune-service` is registered. `fortune-service`
@@ -162,14 +164,14 @@ TIP: The Eureka Dashboard may report a warning, because we aren’t setup with m
 === Set up greeting-service
 
 1) Review the
-`lab05/greeting-service/src/main/resources/bootstrap.yml` file. The name of this app is greeting-service. It also uses the config-server.
+`$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/resources/bootstrap.yml` file. The name of this app is greeting-service. It also uses the config-server.
 
 ``` yml
 spring:
    application:
      name: greeting-service
 ```
-2) Review the `lab05/greeting-service/pom.xml` file. By adding `spring-cloud-services-starter-service-registry` to the classpath this application is eligible to register and discover services with the service-registry.
+2) Review the `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/pom.xml` file. By adding `spring-cloud-services-starter-service-registry` to the classpath this application is eligible to register and discover services with the service-registry.
 ```xml
 <dependency>
 	<groupId>io.pivotal.spring.cloud</groupId>
@@ -177,7 +179,7 @@ spring:
 </dependency>
 ```
 3) Review the following file:
- `lab05/greeting-service/src/main/java/io/pivotal/GreetingServiceApplication.java`
+ `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/GreetingServiceApplication.java`
  Notice the `@EnableDiscoveryClient`. This enables a discovery client that registers the `greeting-service` app with the `service-registry`.
 
 [source,java]
@@ -195,7 +197,7 @@ spring:
 ----
 
 4) Review the the following file:
- `lab05/greeting-service/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `DiscoveryClient`. `DiscoveryClient` is used to discover services registered with the `service-registry`. See `fetchFortuneServiceUrl()`.
+ `$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `DiscoveryClient`. `DiscoveryClient` is used to discover services registered with the `service-registry`. See `fetchFortuneServiceUrl()`.
 [source,java]
 ----
 @Controller
@@ -242,7 +244,7 @@ public class GreetingController {
 
 5) Open a new terminal window. Start the greeting-service app
 ```bash
-$ cd lab05/greeting-service
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-service
 $ mvn clean spring-boot:run
 ```
 6) After the a few moments, check the `service-registry` dashboard http://localhost:8761. Confirm the `greeting-service` app is registered. greeting
@@ -338,10 +340,6 @@ $ cf start fortune-service
 
 Click on the Manage link for the `service-registry`. You can find it by navigating to the space where your applications are deployed.
 
-manage
-
-fortune-service
-
 === Deploy the greeting-service app to PCF
 
 1) Package greeting-service
@@ -425,17 +423,17 @@ TIP: What Just Happened? The `greeting-service` and `fortune-service` both regis
 
 1) Start the `config-server` in a terminal window. You may have terminal windows still open from previous labs. They may be reused for this lab.
 ```bash
-$ cd lab05/config-server
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/config-server
 $ mvn clean spring-boot:run
 ```
 2) Start the `service-registry`
 ```bash
-$ cd lab05/service-registry
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/service-registry
 $ mvn clean spring-boot:run
 ```
 3) Start the `fortune-service`
 ```bash
-$ cd lab05/fortune-service
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
 $ mvn clean spring-boot:run
 ```
 === Set up `greeting-ribbon`
@@ -446,7 +444,7 @@ In this case, we don’t need to explicitly include Ribbon support in the `pom.x
 
 1) Review the the following file:
 
-`lab05/greeting-ribbon/src/main/java/io/pivotal/greeting/GreetingController.java`.
+`$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-ribbon/src/main/java/io/pivotal/greeting/GreetingController.java`.
 
 Notice the `loadBalancerClient`. It is a client side load balancer (Ribbon). Review the `fetchFortuneServiceUrl()` method. Ribbon is integrated with Eureka so that it can discover services as well. Notice how the `loadBalancerClient` chooses a service instance by name.
 [source,java]
@@ -495,7 +493,7 @@ public class GreetingController {
 
 2) Open a new terminal window. Start the `greeting-ribbon` app.
 ```bash
-$ cd lab05/greeting-ribbon
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-ribbon
 $ mvn clean spring-boot:run
 ```
 3) After the a few moments, check the service-registry dashboard http://localhost:8761. Confirm the greeting-ribbon app is registered.
@@ -511,7 +509,7 @@ No additions to the pom.xml
 TIP: In this case, we don’t need to explicitly include Ribbon support in the pom.xml. Ribbon support is pulled in through transitive dependencies (dependencies of the dependencies we have already defined).
 
 1) Review the the following file:
-`lab05/greeting-ribbon-rest/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `RestTemplate`. It is not the usual `RestTemplate`, it is load balanced by Ribbon. The `@LoadBalanced` annotation is a qualifier to ensure we get the load balanced `RestTemplate` injected. This further simplifies application code.
+`$SPRING_CLOUD_SERVICES_LABS_HOME/greeting-ribbon-rest/src/main/java/io/pivotal/greeting/GreetingController.java`. Notice the `RestTemplate`. It is not the usual `RestTemplate`, it is load balanced by Ribbon. The `@LoadBalanced` annotation is a qualifier to ensure we get the load balanced `RestTemplate` injected. This further simplifies application code.
 [source,java]
 ----
 @Controller
@@ -549,7 +547,7 @@ public class GreetingController {
 
 2) Open a new terminal window. Start the `greeting-ribbon-rest` app.
 ```bash
-$ cd lab05/greeting-ribbon-rest
+$ cd $SPRING_CLOUD_SERVICES_LABS_HOME/greeting-ribbon-rest
 $ mvn clean spring-boot:run
 ```
 3) After the a few moments, check the `service-registry` dashboard at http://localhost:8761. Confirm the `greeting-ribbon-rest` app is registered.

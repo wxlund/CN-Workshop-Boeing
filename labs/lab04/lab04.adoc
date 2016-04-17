@@ -2,6 +2,26 @@
 Wayne Lund <wlund@pivotal.io>
 Christian Lewis <clewis@pivotal.io>
 v1.0, 2016-04-14
+=== Set up the spring-cloud-services-labs Repo
+
+1) Fork the labs repo to your account. Browse to: https://github.com/pivotal-enablement/spring-cloud-services-labs. Then fork the repo. fork
+
+2) GitHub displays your new fork. Copy the HTTPS clone URL from your fork.
+
+3) Open a new terminal window. Clone your fork of the spring-cloud-services-labs. This contains several applications used to demonstrate cloud native architectures. Get familiar with the sub directories. We recommend organizing your work into a repos directory. A repos directory is where you will clone repositories and perform your work. The repos directory can be any directory on your local file system (e.g. ~/repos, C:\Users\Administrator\repos, etc.). Throughout the labs we will reference this directory as $REPOS_HOME. There is no need to create the $REPOS_HOME environment variable, it simply a placeholder used to help you organize lab content.
+[source, bash]
+---------------------------
+$ cd $REPOS_HOME
+$ git clone <Your fork of the spring-cloud-services-labs repo - HTTPS clone URL>
+$ cd spring-cloud-services-labs
+$REPOS_HOME/spring-cloud-services/labs will be referred to $SPRING_CLOUD_SERVICES_LABS_HOME throughout the labs.
+---------------------------
+
+4) OPTIONAL STEP - Import applications into your IDE such as Spring Tool Suite (STS). Importing projects at the spring-cloud-services-labs level is recommended because there are several projects. Otherwise, use your favorite editor.
+
+STS Import Help:
+
+Select File > Import… Then select Maven > Existing Maven Projects. On the Import Maven Projects page, browse to your spring-cloud-services-labs directory. Make sure all projects are selected and click Finish.
 
 === Set up the app-config Repo
 
@@ -72,7 +92,14 @@ Your `config-server` will be running locally once you see a *“Started ConfigSe
 ```yml
 name: <Your Name>
 ```
-6) Confirm the `config-server` is up and configured with a backing git repository by calling one of its endpoints. Because the returned payload is `JSON`, we recommend using something that will pretty-print the document. A good tool for this is the Chrome `JSON` Formatter plug-in.
+6) We need to commit our changes for the values to be exposed through your remote origin.
+------------------------
+[source, bash]
+cd $REPOS_HOME
+git commit -m "hello-world.yml"
+git push
+------------------------
+7) Confirm the `config-server` is up and configured with a backing git repository by calling one of its endpoints. Because the returned payload is `JSON`, we recommend using something that will pretty-print the document. A good tool for this is the Chrome `JSON` Formatter plug-in.
 
 Open a browser window and fetch the following url: http://localhost:8888/hello-world/default
 
@@ -156,21 +183,30 @@ management:
     enabled: false # turn of securing the actuator endpoints
 ```
 
-2) Browse to http://localhost:8888/greeting-config/default to review the configuration the `config-server` is providing for greeting-config application.
+2) Remember to commit your changes to github.
+-------------------------
+[source, bash]
+cd $REPOS_HOME
+git add .
+git commit -m "Adding greeting-config.yml"
+git push
+-------------------------
+
+3) Browse to http://localhost:8888/greeting-config/default to review the configuration the `config-server` is providing for greeting-config application.
 
 security
 
-3) Start the `greeting-config` application:
+4) Start the `greeting-config` application:
 ```bash
 $ mvn clean spring-boot:run
 ```
 
-4) Review the logs for the `greeting-config` application. You can see that configuration is being sourced from the `greeting-config.yml` file.
+5) Review the logs for the `greeting-config` application. You can see that configuration is being sourced from the `greeting-config.yml` file.
 
 
 `2015-11-02 08:57:32.962  INFO 58597 --- [lication.main()] b.c.PropertySourceBootstrapConfiguration : Located property source: CompositePropertySource` `[name='configService', propertySources=[MapPropertySource [name='https://github.com/d4v3r/app-config.git/greeting-config.yml']]]`
 
-5) Browse to http://localhost:8080. You should no longer be prompted to authenticate.
+6) Browse to http://localhost:8080. You should no longer be prompted to authenticate.
 
 === Changing Logging Levels
 
