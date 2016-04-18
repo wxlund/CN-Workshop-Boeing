@@ -44,8 +44,6 @@ $ mvn clean spring-boot:run
 
 2) Verify the `config-server` is up. Open a browser and fetch http://localhost:8888/myapp/default
 
-`Config Server`
-
 TIP: Note that a random application name was used and it picked up configuration from the `application.yml`.
 
 === Set up `service-registry`
@@ -157,7 +155,7 @@ public class FortuneServiceApplication {
 $ cd $SPRING_CLOUD_SERVICES_LABS_HOME/fortune-service
 $ mvn clean spring-boot:run
 ```
-5) After the a few moments, check the `service-registry` dashboard. Confirm the `fortune-service` is registered. `fortune-service`
+5) After the a few moments, check the `service-registry` dashboard. Confirm the `fortune-service` is registered. 
 
 TIP: The Eureka Dashboard may report a warning, because we aren’t setup with multiple peers. This can safely be ignored. warning
 
@@ -609,6 +607,7 @@ TIP: You can safely ignore the message: Use ‘cf restage’ to ensure your env 
 5) Start the greeting-ribbon-rest app.
 
 $ cf start greeting-ribbon-rest
+
 6) After the a few moments, check the service-registry. Confirm the greeting-ribbon-rest app is registered.
 
 7) Refresh the greeting-ribbon-rest / endpoint.
